@@ -1,0 +1,223 @@
+@extends('layouts.app')
+
+@section('title', 'Đăng ký - DDH Elite')
+
+@section('content')
+<div class="container-fluid p-0 bg-white shadow-none">
+    <div class="row g-0 min-vh-100 overflow-hidden">
+        
+        <!-- Section bên trái (BIỂU MẪU - ĐÃ ĐẢO VỊ TRÍ) -->
+        <div class="col-md-6 bg-white d-flex align-items-center justify-content-center py-5 border-0 p-0 shadow-lg" style="view-transition-name: auth-content;">
+            <div class="p-4 p-md-5 w-100" style="max-width: 480px;">
+                <h2 class="fw-bold text-dark mb-0 text-center text-uppercase">ĐĂNG KÝ THÀNH VIÊN</h2>
+                
+                <!-- Mobile Logo - Sandwich Position 45px -->
+                <div class="text-center mt-2 mb-3 d-md-none">
+                    <a href="{{ url('/') }}" class="d-inline-block">
+                        <img src="{{ asset('images/logo.jpg') }}" height="45" style="height: 45px; width: auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);" alt="DDH Elite Logo">
+                    </a>
+                </div>
+
+                <p class="text-muted mb-4 text-center small">Gia nhập cộng đồng tinh hoa công nghệ DDH-Elite</p>
+
+                <form method="POST" action="{{ route('register') }}" novalidate>
+                    @csrf
+                    <div class="mb-2">
+                        <label for="name" class="form-label fw-bold small text-muted">HỌ VÀ TÊN</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-user text-muted"></i></span>
+                            <input id="name" type="text" class="form-control border-start-0 ps-0 bg-light py-2 @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" placeholder="VD: Nguyễn Văn A" oninvalid="this.setCustomValidity('Vui lòng nhập họ và tên của bạn')" oninput="this.setCustomValidity('')">
+                        </div>
+                        @error('name')
+                            <span class="text-danger small mt-2 d-flex align-items-center gap-1">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="email" class="form-label fw-bold small text-muted">EMAIL</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-envelope text-muted"></i></span>
+                            <input id="email" type="email" class="form-control border-start-0 ps-0 bg-light py-2 @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="nhapemail@domain.com" oninvalid="this.setCustomValidity('Vui lòng nhập địa chỉ Email hợp lệ')" oninput="this.setCustomValidity('')">
+                        </div>
+                        @error('email')
+                            <span class="text-danger small mt-2 d-flex align-items-center gap-1">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="password" class="form-label fw-bold small text-muted">MẬT KHẨU</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-lock text-muted"></i></span>
+                            <input id="password" type="password" class="form-control border-start-0 border-end-0 ps-0 bg-light py-2 @error('password') is-invalid @enderror" name="password" required autocomplete="new-password" placeholder="Tối thiểu 8 ký tự" oninvalid="this.setCustomValidity('Vui lòng nhập mật khẩu tối thiểu 8 ký tự')" oninput="this.setCustomValidity('')">
+                            <span class="input-group-text bg-light border-start-0 px-3 cursor-pointer toggle-password" style="cursor: pointer;">
+                                <i class="fas fa-eye text-muted"></i>
+                            </span>
+                        </div>
+                        @error('password')
+                            <span class="text-danger small mt-2 d-flex align-items-center gap-1">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password-confirm" class="form-label fw-bold small text-muted">XÁC NHẬN MẬT KHẨU</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="fas fa-check text-muted"></i></span>
+                            <input id="password-confirm" type="password" class="form-control border-start-0 border-end-0 ps-0 bg-light py-2" name="password_confirmation" required autocomplete="new-password" placeholder="Nhập lại mật khẩu" oninvalid="this.setCustomValidity('Vui lòng xác nhận lại mật khẩu')" oninput="this.setCustomValidity('')">
+                            <span class="input-group-text bg-light border-start-0 px-3 cursor-pointer toggle-password" style="cursor: pointer;">
+                                <i class="fas fa-eye text-muted"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mb-4">
+                        <button type="submit" class="btn btn-primary btn-lg py-2 rounded-pill fw-bold fs-6 shadow-sm" style="background-color: var(--primary-blue); border: none;">
+                            <i class="fas fa-user-plus me-2"></i> ĐĂNG KÝ NGAY
+                        </button>
+                    </div>
+
+                    <!-- Social Login Section -->
+                    <div class="text-center mb-4 position-relative">
+                        <hr class="text-muted opacity-25">
+                        <span class="position-absolute top-50 start-50 translate-middle px-3 bg-white text-muted small">Hoặc đăng ký bằng</span>
+                    </div>
+
+                    <div class="d-flex gap-4 justify-content-center mb-4">
+                        <a href="{{ route('social.login', 'google') }}" class="social-btn" title="Đăng ký qua Google">
+                            <img src="{{ asset('images/google_icon.png') }}" alt="Google" width="32" height="32">
+                        </a>
+                        <a href="{{ route('social.login', 'zalo') }}" class="social-btn" title="Đăng ký qua Zalo">
+                            <img src="{{ asset('images/zalo_icon.png') }}" alt="Zalo" width="32" height="32">
+                        </a>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="small text-muted mb-0">Đã có tài khoản? 
+                            <a href="{{ route('login') }}" class="fw-bold text-decoration-none ms-1 text-primary" style="color: var(--accent-orange) !important;">Đăng nhập DDH-Elite</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Section bên phải -->
+        <div class="col-md-6 d-none d-md-block position-relative border-0 shadow-none overflow-hidden" style="height: 100vh;">
+            <!-- Background Mascot (Full Cover Mode - No Whitespace) -->
+            <div class="h-100 w-100" style="position: absolute; top: 0; left: 0; z-index: 1;">
+                <img src="{{ asset('images/auth_mascot.png') }}" alt="Mascot Background" class="w-100 h-100" style="object-fit: cover;">
+            </div>
+            
+            <!-- Central Branding Overlay (Elite Dynamic Layout) -->
+            <div class="position-absolute w-100 h-100 d-flex flex-column align-items-center justify-content-between py-5 px-4" style="z-index: 2; top: 0; left: 0;">
+                <!-- Brand Logo (High Aligned - Flex Mode) -->
+                <div class="text-center w-100 mt-2">
+                    <a href="{{ url('/') }}" class="hover-opacity-75 d-inline-block">
+                        <img src="{{ asset('images/logo.jpg') }}" height="65" style="height: 65px; width: auto; border-radius: 12px; object-fit: contain; box-shadow: 0 10px 30px rgba(0,0,0,0.3);" alt="DDH Elite Logo">
+                    </a>
+                </div>
+
+                <div style="width: 100%; max-width: 540px;" class="d-flex flex-column align-items-center mb-auto mt-auto">
+                    <!-- Benefits Glass Card (Navy-Orange Hybrid) -->
+                    <div class="benefit-glass-card p-5 rounded-4 shadow-lg w-100" style="background: linear-gradient(135deg, rgba(13, 33, 55, 0.9) 0%, rgba(249, 115, 22, 0.25) 100%) !important; backdrop-filter: blur(15px); color: white; border: 2px solid #f97316 !important; view-transition-name: auth-glass-card;">
+                        <div class="mb-4 text-center text-uppercase">
+                            <h3 class="fw-bold mb-1">GIA NHẬP <span class="text-white">DDH-ELITE</span></h3>
+                            <p class="text-white-50 small ls-1 fw-bold">Cửa ngõ dẫn tới tương lai công nghệ</p>
+                        </div>
+                        <div class="benefit-list">
+                            <div class="d-flex align-items-center mb-3 gap-3">
+                                <i class="fas fa-gift text-warning fs-5"></i>
+                                <span class="small">Tặng ngay Voucher <span class="fw-bold text-white">100.000 VNĐ</span> cho thành viên mới.</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-3 gap-3">
+                                <i class="fas fa-gem text-info fs-5"></i>
+                                <span class="small">Nhân đôi <span class="fw-bold text-white">Điểm thưởng (DDH-Points)</span> đơn đầu tiên.</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-3 gap-3">
+                                <i class="fas fa-rocket text-danger fs-5"></i>
+                                <span class="small">Ưu tiên trải nghiệm <span class="fw-bold text-white">Sản phẩm giới hạn</span>.</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-3 gap-3">
+                                <i class="fas fa-users-viewfinder text-success fs-5"></i>
+                                <span class="small">Tham gia <span class="fw-bold text-white">Cộng đồng Elite</span> nhận ưu đãi kín.</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="fas fa-headset text-white fs-5"></i>
+                                <span class="small">Hỗ trợ kỹ thuật <span class="fw-bold text-white">Expert Care 1-1</span> từ chuyên gia.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('input');
+            const icon = this.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+    });
+</script>
+
+<style>
+    main { padding: 0 !important; margin: 0 !important; }
+    .footer { margin-top: 0 !important; }
+    .container-fluid { max-width: 100% !important; }
+
+    .social-btn {
+        width: 55px; height: 55px;
+        display: flex; align-items: center; justify-content: center;
+        border: 1px solid #eee; border-radius: 50%;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        background: white; text-decoration: none;
+    }
+    .social-btn:hover {
+        transform: translateY(-5px) scale(1.1);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        border-color: #ddd;
+    }
+    .social-btn img { object-fit: contain; }
+
+    .form-control:focus { box-shadow: none; border-color: #dee2e6; background-color: #ffffff !important; }
+    .input-group:focus-within .input-group-text, .input-group:focus-within .form-control {
+        border-color: var(--primary-blue) !important; background-color: #ffffff !important;
+    }
+    .input-group:focus-within .input-group-text i { color: var(--primary-blue) !important; }
+    .object-fit-contain { object-fit: contain; }
+
+    .toggle-password:hover i {
+        color: var(--primary-blue) !important;
+    }
+
+    .btn-orange, .btn-primary {
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    }
+    .btn-orange:hover, .btn-primary:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+        filter: brightness(1.1);
+    }
+</style>
+@endsection
