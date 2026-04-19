@@ -11,6 +11,7 @@ use App\Models\Coupon;
 use App\Models\Post;
 use App\Models\Banner;
 use App\Models\Slide;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -90,6 +91,30 @@ class MobileApiController extends Controller
         ]);
     }
 
+    // 📰 BLOG / POSTS
+    public function getPosts(Request $request)
+    {
+        $query = Post::where('is_published', 1)->orderBy('created_at', 'desc');
+
+        if ($request->search) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $query->paginate(10)
+        ]);
+    }
+
+    public function getPostDetail($id)
+    {
+        $post = Post::where('is_published', 1)->findOrFail($id);
+        return response()->json([
+            'success' => true,
+            'data' => $post
+        ]);
+    }
+
     // 👤 AUTH
     public function login(Request $request)
     {
@@ -137,6 +162,34 @@ class MobileApiController extends Controller
             'token' => $token,
             'user' => $user
         ]);
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $user = \App\Models\User::where('email', $request->email)->first();
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Chúng tôi không tìm thấy người dùng nào với địa chỉ Email này.'
+            ], 404);
+        }
+
+        // Send reset link using Laravel's password broker
+        $status = Password::sendResetLink($request->only('email'));
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Chúng tôi đã gửi liên kết khôi phục mật khẩu vào Email của bạn!'
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Không thể gửi email khôi phục. Vui lòng thử lại sau.'
+        ], 500);
     }
 
     public function logout(Request $request)

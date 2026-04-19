@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\MobileApiController;
+use Illuminate\Support\Facades\Password;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +22,12 @@ Route::prefix('v1')->group(function () {
     // Auth routes
     Route::post('/login', [MobileApiController::class, 'login']);
     Route::post('/register', [MobileApiController::class, 'register']);
+    Route::post('/password/email', [MobileApiController::class, 'forgotPassword']);
     Route::get('/social/token', [MobileApiController::class, 'getSocialToken']);
+    
+    // Blog/Posts routes
+    Route::get('/posts', [MobileApiController::class, 'getPosts']);
+    Route::get('/posts/{id}', [MobileApiController::class, 'getPostDetail']);
 
     // Protected routes (Requires Login)
     Route::middleware('auth:sanctum')->group(function () {
