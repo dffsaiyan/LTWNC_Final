@@ -326,7 +326,9 @@
             .ai-chat-footer input { font-size: 13px !important; }
             
             .zalo-pulse, .ai-pulse { transform: scale(0.8); }
+            @unless(Route::is('login', 'register', 'password.*'))
             body { padding-bottom: 70px; } /* Space for bottom nav */
+            @endunless
         }
 
         @media (max-width: 768px) {
@@ -1958,8 +1960,10 @@
     </div>
     @endunless
     <main class="pt-0">
+        @unless(Route::is('login', 'register', 'password.*'))
         <div class="container mt-3">
         </div>
+        @endunless
         @yield('content')
     </main>
 
@@ -2481,6 +2485,7 @@
         }
     </script>
     <!-- Zalo Floating Button -->
+    @unless(Route::is('login', 'register', 'password.*'))
     <a href="https://zalo.me/0337654252" target="_blank" class="zalo-float">
         <div class="zalo-pulse"></div>
         <img src="{{ asset('images/zalo_icon.png') }}" alt="Zalo Chat">
@@ -2518,6 +2523,7 @@
             </button>
         </div>
     </div>
+    @endunless
 
     <script>
         function toggleAIChat() {
