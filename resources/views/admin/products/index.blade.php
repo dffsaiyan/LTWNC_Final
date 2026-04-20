@@ -146,26 +146,65 @@
             .badge-outline, .badge { font-size: 0.7rem !important; padding: 2px 8px !important; }
             .btn-sm { padding: 4px 8px !important; font-size: 0.7rem !important; }
 
-            /* ULTRA COMPACT PAGINATION ON MOBILE */
-            .pagination-elite-wrapper nav { flex-direction: column !important; gap: 10px !important; }
-            .pagination-elite-wrapper nav div:first-child { display: none !important; } /* Hide mobile-specific buttons if we want desktop style */
-            .pagination-elite-wrapper nav div:last-child { display: flex !important; flex-direction: column !important; align-items: center !important; width: 100%; }
+            /* PREMIUM ELITE PAGINATION ON MOBILE */
+            .pagination-elite-wrapper { padding: 1.5rem 1rem !important; background: transparent !important; }
+            .pagination-elite-wrapper nav { flex-direction: row !important; justify-content: center !important; }
             
-            /* Text: "Hiển thị 1 đến 15..." */
-            .pagination-elite-wrapper .text-muted { font-size: 0.7rem !important; margin-bottom: 5px !important; }
+            .pagination-elite-wrapper nav .d-sm-none { display: none !important; } 
+            .pagination-elite-wrapper nav .d-sm-flex { display: flex !important; width: 100% !important; flex-direction: column !important; }
+            .pagination-elite-wrapper .small.text-muted { display: none !important; } 
+
+            .pagination-elite-wrapper .pagination { 
+                display: flex !important; width: 100% !important; justify-content: center !important; 
+                align-items: center !important; gap: 20px !important; overflow: visible !important;
+            }
             
-            /* Page Numbers */
-            .pagination-elite-wrapper .pagination { display: flex !important; gap: 3px !important; padding: 0 !important; }
-            .pagination-elite-wrapper .page-item { display: inline-block !important; }
-            .pagination-elite-wrapper .page-link { padding: 5px 8px !important; font-size: 0.65rem !important; border-radius: 6px !important; }
+            .pagination-elite-wrapper .page-item:not(:first-child):not(:last-child):not(.active) { display: none !important; }
+            
+            /* Nút mũi tên tròn Floating */
+            .pagination-elite-wrapper .page-item:first-child .page-link, 
+            .pagination-elite-wrapper .page-item:last-child .page-link { 
+                width: 46px !important; height: 46px !important; border-radius: 50% !important;
+                background: #fff !important; border: none !important; color: #1e293b !important;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important; font-size: 0 !important; /* Giấu dấu cũ */
+                position: relative; transition: all 0.2s ease;
+            }
+            
+            .pagination-elite-wrapper .page-item:first-child .page-link::after { 
+                content: "\f053"; font-family: "Font Awesome 5 Free"; font-weight: 900; 
+                font-size: 0.9rem; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+            }
+            .pagination-elite-wrapper .page-item:last-child .page-link::after { 
+                content: "\f054"; font-family: "Font Awesome 5 Free"; font-weight: 900; 
+                font-size: 0.9rem; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+            }
+            
+            .pagination-elite-wrapper .page-item.disabled .page-link { opacity: 0.4 !important; box-shadow: none !important; }
+            .pagination-elite-wrapper .page-item:not(.disabled) .page-link:active { transform: scale(0.9) !important; background: #f8fafc !important; }
+
+            /* Số trang hiện tại ở giữa */
+            .pagination-elite-wrapper .page-item.active { flex: 0 0 auto; min-width: 110px; text-align: center; }
+            .pagination-elite-wrapper .page-item.active .page-link { 
+                background: rgba(255,255,255,0.7) !important; backdrop-filter: blur(8px);
+                border: 1px solid rgba(0,0,0,0.04) !important; color: #1e293b !important; 
+                font-weight: 600 !important; font-size: 0.95rem !important; border-radius: 50px !important;
+                padding: 8px 18px !important; box-shadow: 0 2px 8px rgba(0,0,0,0.03) !important;
+                display: inline-flex !important; align-items: center; justify-content: center; gap: 4px;
+            }
+            .pagination-elite-wrapper .page-item.active .page-link::before { 
+                content: "Trang"; font-weight: 500; color: #64748b; font-size: 0.95rem;
+            }
+        }
         }
     </style>
 
     <div id="productTableContainer">
         <!-- 🖥️ UNIFIED RESPONSIVE TABLE -->
-        <div class="card animate-in delay-1 border-0 shadow-sm rounded-4 overflow-hidden">
+        <!-- 📱 MOBILE & 🖥️ DESKTOP UNIFIED VIEW -->
+        <div class="card animate-in delay-1 border-0 shadow-sm rounded-4 overflow-hidden bg-transparent bg-lg-white">
             <div class="card-body p-0">
-                <div class="table-responsive">
+                <!-- 🖥️ DESKTOP TABLE VIEW (Visible on LG and up) -->
+                <div class="table-responsive d-none d-lg-block">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="bg-light">
                             <tr>
@@ -221,6 +260,56 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+
+                <!-- 📱 MOBILE CARD VIEW (Visible below LG) -->
+                <div class="d-lg-none p-2">
+                    <div class="row g-3">
+                        @foreach($products as $product)
+                        <div class="col-12">
+                            <div class="mobile-product-card p-3 rounded-4 shadow-sm bg-white border border-light">
+                                <div class="d-flex gap-3 align-items-start mb-3">
+                                    <div class="mobile-card-img" style="width: 70px; height: 70px; border-radius: 12px; background: #f8fafc; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.03);">
+                                        <img src="{{ $product->image ? asset($product->image) : 'https://via.placeholder.com/70' }}" class="object-fit-contain" width="55" height="55">
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-bold text-dark mb-1" style="font-size: 0.95rem; line-height: 1.3;">{{ $product->name }}</div>
+                                        <div class="text-muted" style="font-size: 0.75rem;">SKU: DDH-{{ strtoupper(Str::limit($product->category->slug ?? 'PRO', 3, '')) }}-{{ str_pad($product->id, 4, '0', STR_PAD_LEFT) }}</div>
+                                        <div class="mt-2">
+                                            <span class="badge-outline py-1 px-2" style="font-size: 0.65rem; border-color: var(--ddh-blue); color: var(--ddh-blue);">{{ $product->category->name ?? 'N/A' }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center pt-3 border-top border-light mt-3">
+                                    <div>
+                                        <div class="text-muted mb-1" style="font-size: 0.7rem; text-transform: uppercase; font-weight: 600;">Giá bán</div>
+                                        <div class="fw-bold text-primary" style="font-size: 1rem;">{{ number_format($product->price, 0, ',', '.') }} <small>đ</small></div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="text-muted mb-1" style="font-size: 0.7rem; text-transform: uppercase; font-weight: 600;">Kho hàng</div>
+                                        @if($product->stock > 10)
+                                            <span class="text-success fw-bold" style="font-size: 0.85rem;">{{ $product->stock }} <span style="font-size: 0.75rem;">Còn hàng</span></span>
+                                        @elseif($product->stock > 0)
+                                            <span class="text-warning fw-bold" style="font-size: 0.85rem;">{{ $product->stock }} <span style="font-size: 0.75rem;">Sắp hết</span></span>
+                                        @else
+                                            <span class="text-danger fw-bold" style="font-size: 0.85rem;">Hết hàng</span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="d-flex gap-2 mt-3">
+                                    <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-light border flex-grow-1 py-2 rounded-3 fw-bold" style="font-size: 0.85rem; color: #475569;">
+                                        <i class="fas fa-pen me-2"></i>Chỉnh sửa
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger py-2 px-3 rounded-3" onclick="confirmDelete('{{ $product->id }}', '{{ addslashes($product->name) }}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
             @if($products->hasPages())
