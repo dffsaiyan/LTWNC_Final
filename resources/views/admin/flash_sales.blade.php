@@ -4,23 +4,23 @@
 
 @section('content')
 <div class="container-fluid px-0">
-    <div class="d-flex justify-content-between align-items-center mb-4 animate-in">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 animate-in">
         <div>
             <h5 class="fw-bold mb-1">Quản lý Flash Sale</h5>
             <p class="text-muted mb-0" style="font-size: .82rem;">Bật/tắt chế độ giảm giá sốc cho từng sản phẩm</p>
         </div>
-        <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center flex-wrap gap-2 gap-md-3">
             @if($active_flash_sales > 0)
             <form id="stopAllForm" action="{{ route('admin.flash_sales.stop_all') }}" method="POST">
                 @csrf
-                <button type="button" class="btn btn-outline-danger rounded-pill px-4 fw-bold shadow-sm" style="font-size: .82rem;" onclick="confirmStopAll()">
-                    <i class="fas fa-power-off me-2"></i>Dừng tất cả Sale
+                <button type="button" class="btn btn-outline-danger rounded-pill px-3 px-md-4 fw-bold shadow-sm" style="font-size: .82rem;" onclick="confirmStopAll()">
+                    <i class="fas fa-power-off me-md-2"></i><span class="d-none d-md-inline">Dừng tất cả Sale</span><span class="d-inline d-md-none">Dừng hết</span>
                 </button>
             </form>
             @endif
-            <div class="d-flex align-items-center gap-2 px-4 py-2 rounded-pill" style="background: linear-gradient(135deg, var(--ddh-danger), #c0392b); color: #fff; font-weight: 700; font-size: .85rem;">
+            <div class="d-flex align-items-center gap-2 px-3 px-md-4 py-2 rounded-pill shadow-sm" style="background: linear-gradient(135deg, var(--ddh-danger), #c0392b); color: #fff; font-weight: 700; font-size: .85rem;">
                 <i class="fas fa-fire-flame-curved"></i>
-                {{ $active_flash_sales }} đang chạy
+                {{ $active_flash_sales }} <span class="d-none d-md-inline">đang chạy</span>
             </div>
         </div>
     </div>
@@ -43,17 +43,17 @@
                 <div class="col-lg-7">
                     <form action="{{ route('admin.flash_sales.global_end') }}" method="POST" class="row g-2 align-items-end">
                         @csrf
-                        <div class="col-sm-5">
+                        <div class="col-6 col-md-5">
                             <label class="text-white-50 x-small fw-bold mb-1 ms-2">NGÀY KẾT THÚC</label>
                             <input type="text" name="flash_sale_date" class="form-control rounded-pill border-0 flash-date-input px-3" 
                                    value="{{ $global_flash_sale_end ? \Carbon\Carbon::parse($global_flash_sale_end)->format('Y-m-d') : '' }}" placeholder="Chọn ngày...">
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-6 col-md-4">
                             <label class="text-white-50 x-small fw-bold mb-1 ms-2">GIỜ KẾT THÚC</label>
                             <input type="text" name="flash_sale_time" class="form-control rounded-pill border-0 flash-time-input px-3" 
                                    value="{{ $global_flash_sale_end ? \Carbon\Carbon::parse($global_flash_sale_end)->format('H:i') : '' }}" placeholder="Chọn giờ...">
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-12 col-md-3">
                             <button type="submit" class="btn btn-warning w-100 rounded-pill fw-bold" style="height: 48px;">
                                 <i class="fas fa-save me-1"></i> Cập nhật
                             </button>
@@ -91,16 +91,16 @@
             </div>
 
             <!-- Ô tìm kiếm nhanh -->
-            <form action="{{ route('admin.flash_sales') }}" method="GET" class="d-flex gap-2 ms-auto">
+            <form action="{{ route('admin.flash_sales') }}" method="GET" class="d-flex gap-2 ms-auto w-100 w-md-auto mt-2 mt-md-0">
                 @if(request('category_id'))
                     <input type="hidden" name="category_id" value="{{ request('category_id') }}">
                 @endif
-                <div class="position-relative">
+                <div class="position-relative flex-grow-1 flex-md-grow-0">
                     <input type="text" name="search" value="{{ request('search') }}" 
-                           class="form-control form-control-sm rounded-pill ps-4" 
+                           class="form-control form-control-sm rounded-pill ps-4 w-100" 
                            placeholder="Tìm tên sản phẩm..." 
                            autocomplete="off" 
-                           style="width: 220px; padding-right: 35px; font-size: .78rem; height: 36px; border-color: rgba(0,0,0,0.08);">
+                           style="min-width: 200px; padding-right: 35px; font-size: .78rem; height: 36px; border-color: rgba(0,0,0,0.08);">
                     <i class="fas fa-search position-absolute top-50 translate-middle-y text-muted" style="right: 15px; font-size: .72rem;"></i>
                 </div>
                 @if(request('search') || request('category_id'))
@@ -114,7 +114,8 @@
 
     <div class="card animate-in delay-2">
         <div class="card-body p-0">
-            <div class="table-responsive">
+            <!-- Desktop Table View -->
+            <div class="table-responsive d-none d-md-block">
                 <table class="table table-hover align-middle mb-0">
                     <thead>
                         <tr>
@@ -192,9 +193,86 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Mobile Grid View -->
+            <div class="d-md-none px-2 py-3">
+                <div class="row row-cols-2 g-2">
+                    @foreach($products as $product)
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden position-relative {{ $product->is_flash_sale ? 'bg-white border border-danger border-opacity-25' : 'bg-white' }}" style="transition: transform 0.2s;">
+                            <!-- Status Badge -->
+                            <div class="position-absolute top-0 end-0 m-2 z-1">
+                                @if($product->is_flash_sale)
+                                    <span class="badge rounded-pill bg-danger shadow-sm flash-pulse" style="font-size: .6rem; padding: 4px 8px;">
+                                        <i class="fas fa-bolt me-1"></i>LIVE
+                                    </span>
+                                @else
+                                    <span class="badge rounded-pill bg-light text-muted border border-secondary border-opacity-25 shadow-sm" style="font-size: .6rem; padding: 4px 8px;">Tắt</span>
+                                @endif
+                            </div>
+
+                            <div class="card-body p-2 d-flex flex-column">
+                                <!-- Image Section -->
+                                <div class="text-center mb-2 mt-1" style="height: 100px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 12px;">
+                                    <img src="{{ $product->image ?? 'https://via.placeholder.com/100' }}" class="object-fit-contain" style="max-width: 85%; max-height: 85%;">
+                                </div>
+
+                                <!-- Info Section -->
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold mb-1 text-dark" style="font-size: .78rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2rem;">
+                                        {{ $product->name }}
+                                    </div>
+                                    <div class="text-muted mb-2" style="font-size: .68rem;">
+                                        <i class="fas fa-tag me-1 opacity-50"></i>{{ Str::limit($product->category->name ?? 'N/A', 15) }}
+                                    </div>
+
+                                    <div class="bg-light rounded-3 p-2 mb-2">
+                                        <div class="text-muted text-center x-small mb-1" style="font-size: .62rem; text-decoration: line-through;">
+                                            {{ number_format($product->price, 0, ',', '.') }} đ
+                                        </div>
+                                        <form action="{{ route('admin.flash_sales.update', $product->id) }}" method="POST">
+                                            @csrf
+                                            <div class="input-group input-group-sm">
+                                                <input type="number" name="sale_price" class="form-control border-0 text-center fw-bold text-danger p-0" 
+                                                       value="{{ round($product->sale_price) }}"
+                                                       {{ !$product->is_flash_sale ? 'disabled' : '' }}
+                                                       style="font-size: .85rem; background: transparent;">
+                                                @if($product->is_flash_sale)
+                                                    <button type="submit" name="update_price" value="1" class="btn btn-link text-warning p-1" style="font-size: .8rem;">
+                                                        <i class="fas fa-save"></i>
+                                                    </button>
+                                                @endif
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- Action Section -->
+                                <div class="mt-auto">
+                                    <form action="{{ route('admin.flash_sales.update', $product->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" name="toggle_status" value="1"
+                                                class="btn btn-sm w-100 rounded-pill fw-bold shadow-sm {{ $product->is_flash_sale ? 'btn-outline-secondary border-opacity-25' : 'btn-ddh-orange' }}" 
+                                                style="font-size: .7rem; padding: 8px 0;">
+                                            @if($product->is_flash_sale)
+                                                <i class="fas fa-power-off me-1"></i>Tắt
+                                            @else
+                                                <i class="fas fa-bolt me-1"></i>Bật Sale
+                                            @endif
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
         </div>
         @if($products->hasPages())
-        <div class="card-footer bg-white border-0 py-3 px-4">{{ $products->links() }}</div>
+        <div class="card-footer bg-white border-0 py-3 px-4 pagination-elite-wrapper">
+            {{ $products->links() }}
+        </div>
         @endif
     </div>
 </div>
@@ -259,6 +337,13 @@
     }
     .flatpickr-current-month .flatpickr-monthDropdown-months {
         font-weight: 700 !important;
+    }
+
+    @media (max-width: 768px) {
+        .card-body.p-4 { padding: 1.25rem !important; }
+        .bg-warning.rounded-circle { width: 40px !important; height: 40px !important; }
+        .bg-warning.rounded-circle i { font-size: 1.2rem !important; }
+        h6.text-white { font-size: 0.9rem; }
     }
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">

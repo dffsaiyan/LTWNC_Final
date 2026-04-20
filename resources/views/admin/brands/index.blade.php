@@ -163,29 +163,6 @@
         .form-control-lg { height: 45px !important; font-size: 0.95rem !important; }
         .btn-ddh-orange { padding: 12px !important; font-size: 0.9rem !important; }
         
-        /* ELITE PAGINATION MOBILE OVERRIDES */
-        .pagination-elite-wrapper { padding: 1.2rem 1rem !important; }
-        .pagination-elite-wrapper nav { flex-direction: row !important; justify-content: center !important; }
-        .pagination-elite-wrapper nav .d-sm-none { display: none !important; } 
-        .pagination-elite-wrapper nav .d-sm-flex { display: flex !important; width: 100% !important; flex-direction: column !important; }
-        .pagination-elite-wrapper .small.text-muted { display: none !important; } 
-
-        .pagination-elite-wrapper .pagination { 
-            display: flex !important; width: 100% !important; justify-content: center !important; 
-            align-items: center !important; gap: 15px !important; overflow: visible !important;
-        }
-        .pagination-elite-wrapper .page-item:not(:first-child):not(:last-child):not(.active) { display: none !important; }
-        .pagination-elite-wrapper .page-item .page-link { 
-            width: 42px !important; height: 42px !important; border-radius: 50% !important;
-            display: flex !important; align-items: center !important; justify-content: center !important;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.06) !important; border: none !important;
-        }
-        .pagination-elite-wrapper .page-item.active .page-link { 
-            width: auto !important; border-radius: 50px !important; padding: 0 15px !important;
-            background: #fff !important; color: #0f172a !important; font-size: 0.9rem !important;
-            box-shadow: none !important;
-        }
-        .pagination-elite-wrapper .page-item.active .page-link::before { content: "Trang "; color: #94a3b8; font-weight: 500; }
     }
 </style>
 
