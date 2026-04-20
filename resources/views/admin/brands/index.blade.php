@@ -59,7 +59,8 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
+                    <!-- Desktop Table View -->
+                    <table class="table table-hover align-middle mb-0 d-none d-lg-table">
                         <thead>
                             <tr>
                                 <th class="ps-4">Logo</th>
@@ -102,7 +103,51 @@
                             @endforeach
                         </tbody>
                     </table>
+
+                    <!-- Mobile Card View -->
+                    <div class="d-lg-none p-3">
+                        @foreach($brands as $brand)
+                        <div class="card mb-3 rounded-4 border-0 shadow-sm elite-mobile-card" style="background: #fff; border: 1px solid rgba(0,0,0,0.02) !important;">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="bg-light rounded-3 p-2 d-flex align-items-center justify-content-center border" style="width: 65px; height: 50px; flex-shrink: 0;">
+                                        @if($brand->logo)
+                                            <img src="{{ asset('storage/'.$brand->logo) }}" alt="{{ $brand->name }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                        @else
+                                            <i class="fas fa-image text-muted opacity-25"></i>
+                                        @endif
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-bold text-dark fs-6">{{ $brand->name }}</div>
+                                        <div class="text-muted" style="font-size: 0.7rem;">{{ $brand->slug }}</div>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-soft-primary text-primary px-2 py-1 rounded-pill" style="font-size: 10px;">{{ $brand->products_count }} SP</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2 mt-3 pt-2 border-top">
+                                    <button class="btn btn-sm btn-light rounded-pill flex-fill py-2 fw-bold" onclick="editBrand({{ $brand->id }}, '{{ addslashes($brand->name) }}', '{{ $brand->logo ? asset('storage/'.$brand->logo) : '' }}')" style="font-size: 0.75rem;">
+                                        <i class="fas fa-edit me-1"></i> Sửa
+                                    </button>
+                                    <form action="{{ route('admin.brands.delete', $brand->id) }}" method="POST" class="flex-fill" onsubmit="return confirm('Xóa hãng này?')">
+                                        @csrf
+                                        <button class="btn btn-sm btn-outline-danger rounded-pill w-100 py-2" style="font-size: 0.75rem;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
                 </div>
+
+                <!-- Elite Pagination -->
+                @if($brands->hasPages())
+                <div class="pagination-elite-wrapper px-4 py-3 border-top bg-light bg-opacity-50">
+                    {{ $brands->links() }}
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -111,6 +156,37 @@
 <style>
     .bg-soft-primary { background: rgba(0, 86, 150, 0.1); }
     .hover-bg-light:hover { background: rgba(0, 0, 0, 0.02); }
+
+    @media (max-width: 991.98px) {
+        .card-body.p-4 { padding: 1.25rem !important; }
+        .form-label { font-size: 0.75rem !important; font-weight: 700 !important; margin-bottom: 6px !important; }
+        .form-control-lg { height: 45px !important; font-size: 0.95rem !important; }
+        .btn-ddh-orange { padding: 12px !important; font-size: 0.9rem !important; }
+        
+        /* ELITE PAGINATION MOBILE OVERRIDES */
+        .pagination-elite-wrapper { padding: 1.2rem 1rem !important; }
+        .pagination-elite-wrapper nav { flex-direction: row !important; justify-content: center !important; }
+        .pagination-elite-wrapper nav .d-sm-none { display: none !important; } 
+        .pagination-elite-wrapper nav .d-sm-flex { display: flex !important; width: 100% !important; flex-direction: column !important; }
+        .pagination-elite-wrapper .small.text-muted { display: none !important; } 
+
+        .pagination-elite-wrapper .pagination { 
+            display: flex !important; width: 100% !important; justify-content: center !important; 
+            align-items: center !important; gap: 15px !important; overflow: visible !important;
+        }
+        .pagination-elite-wrapper .page-item:not(:first-child):not(:last-child):not(.active) { display: none !important; }
+        .pagination-elite-wrapper .page-item .page-link { 
+            width: 42px !important; height: 42px !important; border-radius: 50% !important;
+            display: flex !important; align-items: center !important; justify-content: center !important;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06) !important; border: none !important;
+        }
+        .pagination-elite-wrapper .page-item.active .page-link { 
+            width: auto !important; border-radius: 50px !important; padding: 0 15px !important;
+            background: #fff !important; color: #0f172a !important; font-size: 0.9rem !important;
+            box-shadow: none !important;
+        }
+        .pagination-elite-wrapper .page-item.active .page-link::before { content: "Trang "; color: #94a3b8; font-weight: 500; }
+    }
 </style>
 
 <script>

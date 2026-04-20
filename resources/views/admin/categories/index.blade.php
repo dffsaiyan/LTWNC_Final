@@ -114,6 +114,13 @@
                             @endforeach
                         </div>
                     </div>
+
+                    <!-- Elite Pagination -->
+                    @if($categories->hasPages())
+                    <div class="pagination-elite-wrapper px-4 py-3 border-top bg-light bg-opacity-50">
+                        {{ $categories->links() }}
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>

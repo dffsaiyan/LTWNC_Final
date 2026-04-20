@@ -516,7 +516,7 @@ class AdminController extends Controller implements HasMiddleware
 
     // --- Category Management ---
     public function categories() {
-        $categories = Category::withCount('products')->orderBy('order_index', 'asc')->get();
+        $categories = Category::withCount('products')->orderBy('order_index', 'asc')->paginate(8);
         $settings = \App\Models\Setting::all()->pluck('value', 'key');
         return view('admin.categories.index', compact('categories', 'settings'));
     }
@@ -659,7 +659,7 @@ class AdminController extends Controller implements HasMiddleware
 
     // --- Brands Management ---
     public function brands() {
-        $brands = Brand::withCount('products')->get();
+        $brands = Brand::withCount('products')->latest()->paginate(8);
         return view('admin.brands.index', compact('brands'));
     }
 

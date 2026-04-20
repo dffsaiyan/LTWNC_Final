@@ -9,7 +9,7 @@
         <!-- Slide Form -->
         <div class="col-lg-4">
             <div class="card shadow-sm border-0 rounded-4 sticky-top" style="top: 100px;">
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-lg-4">
                     <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
                         <i class="fas fa-plus-circle text-orange"></i>
                         <span>Thêm Slide mới</span>
@@ -19,11 +19,11 @@
                         @csrf
                         <div class="mb-4">
                             <label class="form-label fw-bold small text-muted text-uppercase">Hình ảnh (1920x800)</label>
-                            <div class="upload-zone p-4 border-2 border-dashed rounded-4 text-center transition-all bg-light hover-bg-white border-light hover-border-orange" 
+                            <div class="upload-zone p-3 p-lg-4 border-2 border-dashed rounded-4 text-center transition-all bg-light hover-bg-white border-light hover-border-orange" 
                                  onclick="document.getElementById('slideImage').click()">
                                 <input type="file" name="image" id="slideImage" class="d-none" onchange="previewSlide(this)" required>
                                 <div id="pre-upload">
-                                    <i class="fas fa-cloud-upload-alt display-4 text-muted mb-3"></i>
+                                    <i class="fas fa-cloud-upload-alt display-5 text-muted mb-2"></i>
                                     <p class="small text-muted mb-0">Click để chọn ảnh slide</p>
                                 </div>
                                 <div id="post-upload" class="d-none">
@@ -33,7 +33,7 @@
                             </div>
                         </div>
 
-                        <div class="mb-4">
+                        <div class="mb-3 mb-lg-4">
                             <label class="form-label fw-bold small text-muted text-uppercase">Link liên kết (URL)</label>
                             <div class="input-group search-group">
                                 <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-link"></i></span>
@@ -60,14 +60,15 @@
         <!-- Slide List -->
         <div class="col-lg-8">
             <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-lg-4">
                     <h5 class="fw-bold mb-4 d-flex align-items-center gap-2">
                         <i class="fas fa-images text-orange"></i>
                         <span>Danh sách Slide</span>
                     </h5>
 
                     <div class="table-responsive rounded-3 overflow-hidden">
-                        <table class="table table-hover align-middle mb-0">
+                        <!-- Desktop Table View -->
+                        <table class="table table-hover align-middle mb-0 d-none d-lg-table">
                             <thead class="bg-light">
                                 <tr>
                                     <th class="border-0 px-4 py-3 small fw-bold text-muted text-uppercase">Slide</th>
@@ -119,7 +120,7 @@
                                                 <h5 class="modal-title fw-bold">Chỉnh sửa Slide #{{ $slide->id }}</h5>
                                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                             </div>
-                                            <div class="modal-body p-4">
+                                            <div class="modal-body p-4 text-start">
                                                 <form action="{{ route('admin.slides.update', $slide->id) }}" method="POST" enctype="multipart/form-data">
                                                     @csrf
                                                     <div class="mb-4 text-center">
@@ -156,6 +157,44 @@
                                 @endforeach
                             </tbody>
                         </table>
+
+                        <!-- Mobile Card List View -->
+                        <div class="d-lg-none">
+                            @foreach($slides as $slide)
+                            <div class="card mb-4 rounded-4 border-0 shadow-sm elite-slide-card overflow-hidden">
+                                <div class="position-relative">
+                                    <img src="{{ asset($slide->image) }}" class="w-100" style="height: 180px; object-fit: cover;">
+                                    <div class="position-absolute top-0 start-0 p-2">
+                                        <span class="badge bg-dark bg-opacity-75 rounded-pill px-3 py-2 fw-bold">#{{ $slide->order }}</span>
+                                    </div>
+                                    <div class="position-absolute bottom-0 end-0 p-2">
+                                        @if($slide->status)
+                                            <span class="badge bg-success rounded-pill px-3 py-2 fw-bold shadow-sm">Đang hiện</span>
+                                        @else
+                                            <span class="badge bg-secondary rounded-pill px-3 py-2 fw-bold shadow-sm">Đang ẩn</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div class="mb-3">
+                                        <div class="text-muted x-small text-uppercase fw-bold mb-1" style="font-size: 10px; letter-spacing: 0.5px;">Link liên kết</div>
+                                        <div class="small text-dark text-truncate fw-medium">{{ $slide->link ?: 'Trống' }}</div>
+                                    </div>
+                                    <div class="d-flex gap-2 pt-2 border-top">
+                                        <button class="btn btn-light text-warning rounded-pill flex-fill py-2 fw-bold" style="font-size: 0.75rem;" data-bs-toggle="modal" data-bs-target="#editSlideModal{{ $slide->id }}">
+                                            <i class="fas fa-edit me-1"></i> Chỉnh sửa
+                                        </button>
+                                        <form action="{{ route('admin.slides.delete', $slide->id) }}" method="POST" class="flex-fill">
+                                            @csrf
+                                            <button type="button" class="btn btn-outline-danger rounded-pill w-100 py-2" style="font-size: 0.75rem;" onclick="confirmDelete(event, {{ $slide->id }})">
+                                                <i class="fas fa-trash-alt me-1"></i> Xóa
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             </div>
