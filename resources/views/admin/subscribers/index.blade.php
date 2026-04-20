@@ -45,7 +45,7 @@
                                          style="width: 42px; height: 42px; background: #f8fafc;">
                                         <i class="fas fa-envelope text-navy opacity-50"></i>
                                     </div>
-                                    <span class="fw-bold text-dark" style="font-size: .92rem;">{{ $sub->email }}</span>
+                                    <span class="fw-bold text-dark" style="font-size: .92rem; word-break: break-all;">{{ $sub->email }}</span>
                                 </div>
                             </td>
                             <td>
@@ -86,10 +86,10 @@
                                          style="width: 40px; height: 40px; background: #f8fafc;">
                                         <i class="fas fa-envelope text-navy opacity-50"></i>
                                     </div>
-                                    <div style="min-width: 0;">
-                                        <div class="fw-bold text-dark mb-0 text-truncate" style="font-size: .88rem; max-width: 200px;">{{ $sub->email }}</div>
+                                    <div style="min-width: 0; flex: 1;">
+                                        <div class="fw-bold text-dark mb-0" style="font-size: .8rem; word-break: break-all;">{{ $sub->email }}</div>
                                         <div class="text-muted x-small" style="font-size: .68rem;">
-                                            <i class="far fa-calendar-alt me-1"></i> {{ $sub->created_at->format('d/m/Y H:i') }}
+                                            <i class="far fa-calendar-alt me-1 text-orange"></i> {{ $sub->created_at->format('d/m/Y H:i') }}
                                         </div>
                                     </div>
                                 </div>

@@ -100,6 +100,10 @@ class AdminController extends Controller implements HasMiddleware
             $customer->total_spent = Order::where('user_id', $customer->id)->where('status', 'completed')->sum('total_price');
         }
 
+        if ($request->ajax()) {
+            return view('admin.orders.partials.customer_list', compact('customers'))->render();
+        }
+
         return view('admin.orders.index', compact('customers'));
     }
 
