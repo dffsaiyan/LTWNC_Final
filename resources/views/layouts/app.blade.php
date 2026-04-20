@@ -1925,6 +1925,7 @@
     </div>
 
     <!-- MOBILE BOTTOM NAVIGATION -->
+    @unless(Route::is('login', 'register', 'password.*'))
     <div class="bottom-nav-elite d-flex d-lg-none">
         <a href="javascript:void(0)" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCategory" class="bottom-nav-item">
             <i class="fas fa-layer-group"></i>
@@ -1955,6 +1956,7 @@
             </a>
         @endguest
     </div>
+    @endunless
     <main class="pt-0">
         <div class="container mt-3">
         </div>
