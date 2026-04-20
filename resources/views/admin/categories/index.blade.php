@@ -3,6 +3,18 @@
 @section('page-title', 'Quản lý Danh mục')
 @section('page-icon', 'images/icon/categories.png')
 
+@section('styles')
+<style>
+    @media (max-width: 991.98px) {
+        .card-body h6 { font-size: 0.9rem !important; }
+        .form-label { font-size: 0.7rem !important; margin-bottom: 4px !important; margin-top: 10px !important; }
+        .form-control-sm, .form-control { font-size: 0.85rem !important; padding: 8px 12px !important; }
+        .btn-ddh-primary, .btn-danger { padding: 8px !important; font-size: 0.8rem !important; }
+        .form-check-label { font-size: 0.75rem !important; }
+    }
+</style>
+@endsection
+
 @section('content')
 <div class="container-fluid px-0">
     <div class="row g-4">
@@ -11,7 +23,8 @@
             <div class="card">
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
+                        <!-- Desktop Table View -->
+                        <table class="table table-hover align-middle mb-0 d-none d-lg-table">
                             <thead>
                                 <tr>
                                     <th class="ps-4">Tên danh mục</th>
@@ -59,6 +72,47 @@
                                 @endforeach
                             </tbody>
                         </table>
+
+                        <!-- Mobile Card View -->
+                        <div class="d-lg-none p-3">
+                            @foreach($categories as $category)
+                            <div class="card mb-3 rounded-4 border-0 shadow-sm elite-mobile-card">
+                                <div class="card-body p-3">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <div class="fw-bold text-dark fs-6">{{ $category->name }}</div>
+                                            <code class="d-block mt-1" style="font-size: .65rem; color: #94a3b8;">{{ $category->slug }}</code>
+                                        </div>
+                                        <span class="badge rounded-pill fw-bold" style="background: rgba(13, 110, 253, 0.08); color: #0d6efd; font-size: 10px; padding: 4px 10px;">
+                                            {{ $category->products_count }} SP
+                                        </span>
+                                    </div>
+
+                                    <div class="filter-chips-mobile mt-3 mb-4">
+                                        <div class="text-muted x-small mb-1" style="font-size: 0.65rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Bộ lọc active</div>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            @forelse($category->filters ?? [] as $f)
+                                                <span class="badge bg-light text-dark border-0 fw-medium" style="font-size: 9px; background: #f1f5f9 !important;">{{ ucfirst($f) }}</span>
+                                            @empty
+                                                <span class="text-muted" style="font-size: 11px;">Chưa có cấu hình</span>
+                                            @endforelse
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex gap-2 pt-2 border-top">
+                                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill flex-fill py-2" 
+                                                data-bs-toggle="modal" data-bs-target="#editModal{{ $category->id }}" style="font-size: .75rem; font-weight: 700;">
+                                            <i class="fas fa-edit me-1"></i> Chỉnh sửa
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-2" 
+                                                onclick='confirmDelete("{{ $category->id }}", {!! json_encode($category->name) !!})' style="font-size: .75rem;">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             </div>
@@ -67,7 +121,7 @@
         <!-- Create Form -->
         <div class="col-lg-4 animate-in delay-1">
             <div class="card">
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-lg-4">
                     <h6 class="fw-bold mb-3"><i class="fas fa-plus-circle me-2" style="color: var(--ddh-orange);"></i>Thêm danh mục</h6>
                     <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
@@ -108,7 +162,7 @@
 
             <!-- Special Sidebar Config -->
             <div class="card mt-4 border-warning shadow-sm animate-in delay-2">
-                <div class="card-body p-4">
+                <div class="card-body p-3 p-lg-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <h6 class="fw-bold mb-0 text-danger"><i class="fas fa-bolt me-2"></i>Mục 10 Sidebar</h6>
                         <span class="badge bg-danger flash-pulse" style="font-size: 10px;">Cố định</span>
