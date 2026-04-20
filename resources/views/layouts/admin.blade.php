@@ -64,16 +64,26 @@
             position: fixed; top: 0; left: 0; bottom: 0;
             width: var(--sidebar-w);
             background: linear-gradient(180deg, var(--ddh-navy) 0%, var(--ddh-navy-mid) 100%);
-            z-index: 2000;
+            z-index: 9992;
             display: flex; flex-direction: column;
             overflow-y: auto; overflow-x: hidden;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             transform: translateX(-100%);
             visibility: hidden;
         }
-        #sidebar.show { 
-            transform: translateX(0); 
-            visibility: visible;
+        
+        /* State when menu is toggled OPEN */
+        body.sidebar-open #sidebar { transform: translateX(0); visibility: visible; }
+        body.sidebar-open #sidebar-overlay { display: block; opacity: 1; }
+        
+        /* Desktop specific: push content when open and HIDE overlay */
+        @media (min-width: 992px) {
+            body.sidebar-open #main-content { padding-left: var(--sidebar-w); }
+            body.sidebar-open #sidebar-overlay { display: none !important; }
+        }
+
+        @media (max-width: 991px) {
+            #main-content { padding-left: 0; }
         }
 
         .sidebar-brand {
@@ -151,10 +161,13 @@
 
         /* ── MAIN CONTENT ──────────────────────── */
         #main-content {
-            margin-left: 0 !important;
             flex: 1; display: flex; flex-direction: column;
             min-height: 100vh;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-left: 0;
+        }
+        @media (max-width: 991px) {
+            #main-content { padding-left: 0; }
         }
 
         /* ── TOP BAR ───────────────────────────── */
@@ -418,10 +431,12 @@
         /* ── SIDEBAR OVERLAY ELITE ──────────────── */
         #sidebar-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
-            z-index: 999; display: none;
-            animation: fadeIn 0.3s ease;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+            z-index: 9991; display: none; opacity: 0;
+            transition: opacity 0.3s ease;
         }
+        body.sidebar-open { overflow: hidden !important; }
+        body.sidebar-open #sidebar-overlay { display: block; opacity: 1; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
     @stack('styles')
@@ -598,14 +613,7 @@
     <script>
         // Sidebar Toggle Elite
         function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            sidebar.classList.toggle('show');
-            if(sidebar.classList.contains('show')) {
-                overlay.style.display = 'block';
-            } else {
-                overlay.style.display = 'none';
-            }
+            document.body.classList.toggle('sidebar-open');
         }
 
         // Live clock Enhanced
