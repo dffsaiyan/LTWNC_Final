@@ -7,9 +7,10 @@
     <div class="row g-4">
         <!-- List -->
         <div class="col-lg-8 animate-in">
-            <div class="card shadow-sm border-0 rounded-4">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
                 <div class="card-body p-0">
-                    <div class="table-responsive">
+                    <!-- Desktop Table -->
+                    <div class="table-responsive d-none d-lg-block">
                         <table class="table table-hover align-middle mb-0">
                             <thead>
                                 <tr class="bg-light">
@@ -78,6 +79,57 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Mobile Cards -->
+                    <div class="d-lg-none p-3">
+                        <div class="row g-3">
+                            @forelse($coupons as $coupon)
+                            <div class="col-12">
+                                <div class="card border shadow-sm rounded-4 bg-white p-3">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <code class="fw-bold" style="color: var(--ddh-blue); background: rgba(0,86,150,.06); padding: 4px 12px; border-radius: 6px;">{{ $coupon->code }}</code>
+                                        <form action="{{ route('admin.coupons.delete', $coupon->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-link text-danger p-0 border-0" onclick="return confirm('Xóa mã này?')">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <div class="text-muted x-small uppercase">Giá trị</div>
+                                            <div class="fw-bold text-danger">{{ $coupon->type == 'percent' ? $coupon->value . '%' : number_format($coupon->value, 0, ',', '.') . ' VNĐ' }}</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-muted x-small uppercase">Tối thiểu</div>
+                                            <div class="fw-bold text-dark" style="font-size: .85rem;">{{ number_format($coupon->min_order_value, 0, ',', '.') }} VNĐ</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-muted x-small uppercase">Lượt dùng</div>
+                                            <div class="fw-bold small">{{ $coupon->used_count }} / {{ $coupon->max_uses ?? '♾️' }}</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="text-muted x-small uppercase">Hạn dùng</div>
+                                            <div class="fw-bold" style="font-size: .82rem;">{{ $coupon->expiry_date ? \Carbon\Carbon::parse($coupon->expiry_date)->format('d/m/Y') : 'Vô hạn' }}</div>
+                                        </div>
+                                        <div class="col-12 mt-2 pt-2 border-top">
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <span class="text-muted x-small uppercase">Áp dụng:</span>
+                                                @if($coupon->category)
+                                                    <span class="badge bg-light text-dark border rounded-pill px-2" style="font-size: 10px;">{{ $coupon->category->name }}</span>
+                                                @else
+                                                    <span class="badge bg-dark text-white rounded-pill px-2" style="font-size: 10px;">Tất cả SP</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @empty
+                            <div class="col-12 text-center py-4 text-muted fw-bold">Chưa có mã giảm giá.</div>
+                            @endforelse
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -136,7 +188,7 @@
 
                         <div class="mb-4">
                             <label class="form-label small fw-bold text-uppercase">Ngày hết hạn</label>
-                            <input type="date" name="expiry_date" class="form-control rounded-3">
+                            <input type="text" name="expiry_date" id="expiry_date_picker" class="form-control rounded-3 bg-white" placeholder="Chọn ngày hết hạn..." readonly>
                         </div>
 
                         <button type="submit" class="btn btn-warning w-100 rounded-pill py-2 fw-bold text-dark shadow-sm">
@@ -148,4 +200,22 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        flatpickr("#expiry_date_picker", {
+            locale: "vn",
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d/m/Y",
+            minDate: "today", // Chặn ngày trong quá khứ
+            disableMobile: true, // Chỉnh lại thành boolean true
+            animate: true,
+            allowInput: false, // Không cho phép gõ tay để tránh lỗi
+            clickOpens: true
+        });
+    });
+</script>
 @endsection

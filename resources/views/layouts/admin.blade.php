@@ -13,6 +13,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
     @livewireStyles
 
     <style>
@@ -476,6 +480,21 @@
             .datetime-display { font-size: 0.65rem !important; padding: 4px 8px !important; gap: 4px !important; }
             .datetime-display i { font-size: 0.75rem !important; }
         }
+
+        /* ── FLATPICKR ELITE CUSTOM ────────────── */
+        .flatpickr-calendar {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+            border: 1px solid var(--ddh-border) !important;
+            border-radius: 12px !important;
+            padding: 5px;
+        }
+        .flatpickr-day.selected {
+            background: var(--ddh-orange) !important;
+            border-color: var(--ddh-orange) !important;
+        }
+        .flatpickr-day:hover { background: rgba(247, 148, 30, 0.1) !important; }
+        .flatpickr-months .flatpickr-month { background: transparent !important; color: var(--ddh-navy) !important; fill: var(--ddh-navy) !important; }
+        .flatpickr-current-month .flatpickr-monthDropdown-months { font-weight: 700 !important; }
 
         /* ── ANIMATIONS ─────────────────────────── */
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
