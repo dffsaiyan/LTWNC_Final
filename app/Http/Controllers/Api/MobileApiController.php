@@ -232,7 +232,30 @@ class MobileApiController extends Controller
     public function updateProfile(Request $request)
     {
         $user = $request->user();
-        $user->update($request->only(['name', 'phone', 'address', 'province_id', 'district_id']));
+        
+        // Handle password change if requested
+        if ($request->filled('password')) {
+            // Social login users have null password, they can't "change" it via old_password check
+            if ($user->password === null && $provider_name = $user->provider_name) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Tài khoản đăng nhập bằng $provider_name không thể đổi mật khẩu tại đây."
+                ], 422);
+            }
+
+            if (!Hash::check($request->old_password, $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Mật khẩu hiện tại không chính xác.'
+                ], 422);
+            }
+            
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->fill($request->only(['name', 'phone', 'address', 'province_id', 'district_id']));
+        $user->save();
+
         return response()->json([
             'success' => true,
             'user' => $user
@@ -483,39 +506,50 @@ class MobileApiController extends Controller
     public function getWishlist(Request $request)
     {
         try {
-            $wishlist = Wishlist::where('user_id', $request->user()->id)
+            $user = $request->user();
+            if (!$user) {
+                return response()->json([
+                    'success' => true,
+                    'data' => []
+                ]);
+            }
+
+            $wishlist = Wishlist::where('user_id', $user->id)
                 ->with('product.category')
                 ->get()
-                ->map(fn($i) => $i->product)
-                ->filter(); // Remove null products if any
+                ->map(fn($item) => $item->product)
+                ->filter()
+                ->values(); // Reset keys for JSON array
 
             return response()->json([
-                'success' => true, 
-                'data' => $wishlist->values() // Ensure it's an array
+                'success' => true,
+                'data' => $wishlist
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error in getWishlist: ' . $e->getMessage()
+                'message' => 'Lỗi lấy danh sách yêu thích: ' . $e->getMessage()
             ], 500);
         }
     }
 
     public function toggleWishlist(Request $request, $productId)
     {
-        $wishlist = \App\Models\Wishlist::where('user_id', Auth::id())->where('product_id', $productId)->first();
+        $user = $request->user();
+        $wishlist = Wishlist::where('user_id', $user->id)->where('product_id', $productId)->first();
         if ($wishlist) {
             $wishlist->delete();
             return response()->json(['success' => true, 'added' => false]);
         }
-        \App\Models\Wishlist::create(['user_id' => Auth::id(), 'product_id' => $productId]);
+        Wishlist::create(['user_id' => $user->id, 'product_id' => $productId]);
         return response()->json(['success' => true, 'added' => true]);
     }
 
     // 🛒 CART SYNC
     public function getCart(Request $request)
     {
-        $cartItems = \App\Models\Cart::where('user_id', Auth::id())->with('product')->get()->map(fn($item) => [
+        $user = $request->user();
+        $cartItems = \App\Models\Cart::where('user_id', $user->id)->with('product')->get()->map(fn($item) => [
             'id' => $item->product_id,
             'name' => $item->product->name,
             'price' => ($item->product->sale_price > 0) ? $item->product->sale_price : $item->product->price,
@@ -529,27 +563,30 @@ class MobileApiController extends Controller
 
     public function addToCart(Request $request)
     {
+        $user = $request->user();
         $p = Product::findOrFail($request->product_id);
         if ($p->stock < $request->quantity) return response()->json(['success' => false, 'message' => 'Hết hàng'], 422);
 
-        $item = \App\Models\Cart::where('user_id', Auth::id())->where('product_id', $request->product_id)->first();
+        $item = \App\Models\Cart::where('user_id', $user->id)->where('product_id', $request->product_id)->first();
         if ($item) {
             $item->increment('quantity', $request->quantity ?? 1);
         } else {
-            \App\Models\Cart::create(['user_id' => Auth::id(), 'product_id' => $request->product_id, 'quantity' => $request->quantity ?? 1]);
+            \App\Models\Cart::create(['user_id' => $user->id, 'product_id' => $request->product_id, 'quantity' => $request->quantity ?? 1]);
         }
         return $this->getCart($request);
     }
 
     public function updateCart(Request $request)
     {
-        \App\Models\Cart::where('user_id', Auth::id())->where('product_id', $request->product_id)->update(['quantity' => $request->quantity]);
+        $user = $request->user();
+        \App\Models\Cart::where('user_id', $user->id)->where('product_id', $request->product_id)->update(['quantity' => $request->quantity]);
         return $this->getCart($request);
     }
 
     public function removeFromCart(Request $request, $productId)
     {
-        \App\Models\Cart::where('user_id', Auth::id())->where('product_id', $productId)->delete();
+        $user = $request->user();
+        \App\Models\Cart::where('user_id', $user->id)->where('product_id', $productId)->delete();
         return $this->getCart($request);
     }
 

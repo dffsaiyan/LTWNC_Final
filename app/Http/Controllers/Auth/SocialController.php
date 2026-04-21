@@ -78,9 +78,25 @@ class SocialController extends Controller
             }
 
             if (session('is_mobile_social')) {
-                $token = Auth::user()->createToken('mobile-app-social')->plainTextToken;
+                $user = Auth::user();
+                $token = $user->createToken('mobile-app-social')->plainTextToken;
                 session()->forget('is_mobile_social');
-                return redirect('/mobile-social-success?token=' . rawurlencode($token) . '&user=' . rawurlencode(json_encode(Auth::user())));
+                
+                // Chuẩn bị dữ liệu sạch
+                $cleanName = str_replace('+', ' ', $user->name);
+                $avatar = $user->social_avatar ?? '';
+                
+                $query = http_build_query([
+                    'token' => $token,
+                    'user_id' => $user->id,
+                    'name' => $cleanName,
+                    'email' => $user->email,
+                    'social_avatar' => $avatar,
+                    'phone' => $user->phone ?? '',
+                    'address' => str_replace('+', ' ', $user->address ?? '')
+                ]);
+
+                return redirect('/mobile-social-success?' . $query);
             }
 
             return redirect('/')->with('success', 'Chào mừng thành viên Elite! Bạn đã đăng nhập thành công.');
