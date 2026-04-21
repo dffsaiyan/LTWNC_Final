@@ -256,6 +256,15 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         initCategoryScroll();
+        
+        // Tự động cuộn đến danh mục đang chọn
+        const activeTab = document.querySelector('.nav-tab-item.active');
+        if (activeTab && activeTab.innerText.trim() !== 'Tất cả mẫu') {
+            const scrollContainer = document.getElementById('categoryScroll');
+            const scrollLeft = activeTab.offsetLeft - (scrollContainer.clientWidth / 2) + (activeTab.clientWidth / 2);
+            scrollContainer.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+        }
+
         const searchInput = document.getElementById('searchInput');
         let debounceTimer;
         if (searchInput) {

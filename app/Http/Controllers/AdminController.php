@@ -301,7 +301,8 @@ class AdminController extends Controller implements HasMiddleware
     private function sanitizePrice($value) {
         if (!$value) return 0;
         // Xóa dấu phẩy, khoảng cách, và dấu chấm phân cách hàng nghìn (nếu có)
-        return (float) str_replace([',', '.', ' ', 'VNĐ', 'đ'], '', $value);
+        $clean = str_replace([',', '.', ' ', 'VNĐ', 'đ'], '', $value);
+        return round((float) $clean);
     }
 
     public function storeProduct(Request $request) {
@@ -389,7 +390,7 @@ class AdminController extends Controller implements HasMiddleware
             }
         }
 
-        return redirect()->route('admin.products')->with('success', 'Đã thêm sản phẩm mới!');
+        return redirect()->route('admin.products', ['category' => $product->category_id])->with('success', 'Đã thêm sản phẩm mới!');
     }
 
     public function editProduct($id) {
@@ -490,7 +491,7 @@ class AdminController extends Controller implements HasMiddleware
             }
         }
 
-        return redirect()->route('admin.products')->with('success', 'Đã cập nhật sản phẩm!');
+        return redirect()->route('admin.products', ['category' => $product->category_id])->with('success', 'Đã cập nhật sản phẩm!');
     }
 
     public function deleteProduct($id) {
