@@ -35,8 +35,24 @@
     /* Đảm bảo Card chứa dropdown đang mở luôn nằm trên cùng */
     .card:has(.dropdown-toggle.show) {
         z-index: 1050 !important;
-        position: relative;
     }
+    
+    @media (max-width: 576px) {
+        /* Hiệu ứng nền mờ (Backdrop) */
+        .dropdown-status-elite:has(.dropdown-menu.show)::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.4); /* Navy dark overlay */
+            backdrop-filter: blur(4px);
+            z-index: 1050;
+            animation: fadeIn 0.3s ease;
+        }
+    }
+
     .dropdown-status-elite .dropdown-menu {
         border: none;
         border-radius: 15px;
@@ -48,10 +64,75 @@
         animation: slideDown 0.3s ease-out;
         border: 1px solid rgba(0,0,0,0.05);
     }
+
+    /* 📱 ELITE BOTTOM SHEET FOR MOBILE */
+    @media (max-width: 576px) {
+        .dropdown-status-elite .dropdown-menu.show {
+            position: fixed !important;
+            bottom: 0 !important;
+            top: auto !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            transform: none !important;
+            border-radius: 25px 25px 0 0 !important;
+            padding: 25px 20px !important;
+            z-index: 1060 !important;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.15) !important;
+            animation: slideUpMobile 0.4s cubic-bezier(0, 0.55, 0.45, 1) !important;
+        }
+
+        /* Xóa bỏ backdrop cũ trên menu */
+        .dropdown-status-elite .dropdown-menu.show::before {
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.5); /* Navy dark overlay */
+            backdrop-filter: blur(4px);
+            z-index: -1;
+            pointer-events: none; /* Cho phép click xuyên qua để Bootstrap đóng menu */
+        }
+
+        .dropdown-status-elite .dropdown-item {
+            padding: 15px 20px !important; /* To hơn để dễ chạm trên mobile */
+            font-size: 14px !important;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .dropdown-status-elite .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Thanh kéo (Handle bar) */
+        .dropdown-status-elite .dropdown-menu.show::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 5px;
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+    }
+
+    @keyframes slideUpMobile {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+    }
+
     @keyframes slideDown {
         from { opacity: 0; transform: translateY(-10px); }
         to { opacity: 1; transform: translateY(0); }
     }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
     .dropdown-status-elite .dropdown-item {
         border-radius: 12px;
         padding: 10px 15px;

@@ -11,7 +11,7 @@
     $is_mobile = $is_mobile ?? false;
 @endphp
 
-<div class="dropdown dropdown-status-elite {{ !$is_mobile ? 'd-flex justify-content-end' : '' }}" onclick="event.stopPropagation()">
+<div class="dropdown dropdown-status-elite {{ !$is_mobile ? 'd-flex justify-content-end' : '' }}">
     <button class="btn {{ $current['class'] }} btn-status dropdown-toggle {{ $is_mobile ? 'w-100' : '' }}" 
             type="button" 
             data-bs-toggle="dropdown" 
