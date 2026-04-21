@@ -292,8 +292,7 @@
                         <i class="fas fa-user-shield"></i> Quản trị hệ thống
                     </a>
                     @endif
-                    <a href="{{ route('logout') }}" class="account-menu-item text-danger" 
-                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <a href="{{ route('logout') }}" class="account-menu-item text-danger confirm-logout-app">
                         <i class="fas fa-sign-out-alt"></i> Đăng xuất
                     </a>
                 </div>

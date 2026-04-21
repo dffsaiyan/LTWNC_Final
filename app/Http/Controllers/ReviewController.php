@@ -31,6 +31,16 @@ class ReviewController extends Controller
             if (!$hasBought) {
                 return redirect()->back()->with('error', 'Bạn chỉ có thể đánh giá (chấm sao) sản phẩm sau khi đã nhận hàng thành công!');
             }
+
+            // Check if already rated
+            $alreadyRated = Review::where('user_id', Auth::id())
+                ->where('product_id', $productId)
+                ->whereNotNull('rating')
+                ->exists();
+            
+            if ($alreadyRated) {
+                return redirect()->back()->with('error', 'Bạn đã đánh giá sản phẩm này rồi. Bạn chỉ có thể gửi thêm bình luận hỏi đáp.');
+            }
         }
  
         Review::create([
@@ -52,6 +62,10 @@ class ReviewController extends Controller
         ]);
  
         $parentReview = Review::findOrFail($reviewId);
+
+        if (!Auth::user()->is_admin) {
+            return redirect()->back()->with('error', 'Chỉ quản trị viên mới có quyền phản hồi đánh giá.');
+        }
  
         Review::create([
             'user_id' => Auth::id(),

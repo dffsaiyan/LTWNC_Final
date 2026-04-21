@@ -2345,6 +2345,34 @@
                 });
             }
         });
+
+        // 🛒 ELITE CLEAR CART CONFIRMATION
+        document.addEventListener('click', function(e) {
+            const clearLink = e.target.closest('.confirm-clear-cart');
+            if (clearLink) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Làm trống giỏ hàng?',
+                    text: 'Bạn có chắc chắn muốn xóa tất cả sản phẩm khỏi giỏ hàng không?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: 'Có, làm trống ngay',
+                    cancelButtonText: 'Quay lại',
+                    reverseButtons: true,
+                    customClass: {
+                        popup: 'rounded-4 shadow-lg border-0',
+                        confirmButton: 'rounded-pill px-4 fw-bold',
+                        cancelButton: 'rounded-pill px-4 fw-bold'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = clearLink.href;
+                    }
+                });
+            }
+        });
     </script>
 
     <div class="elite-toast-container" id="eliteToastContainer"></div>
@@ -2378,6 +2406,11 @@
             @endif
             @if(session('error'))
                 showEliteToast("{{ session('error') }}", 'error');
+            @endif
+            @if($errors->any())
+                @foreach($errors->all() as $error)
+                    showEliteToast("{{ $error }}", 'error');
+                @endforeach
             @endif
         }
         document.addEventListener('DOMContentLoaded', triggerSessionToasts);

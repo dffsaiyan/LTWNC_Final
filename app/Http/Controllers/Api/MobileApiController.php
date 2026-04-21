@@ -75,10 +75,21 @@ class MobileApiController extends Controller
 
     public function getProductDetail($id)
     {
-        $product = Product::with(['category', 'images', 'reviews.user'])->findOrFail($id);
+        $product = Product::with(['category', 'images', 'reviews.user', 'reviews.replies.user'])->findOrFail($id);
+        
+        $canReview = false;
+        if (Auth::guard('sanctum')->check()) {
+            $canReview = Order::where('user_id', Auth::guard('sanctum')->id())
+                ->where('status', 'completed')
+                ->whereHas('items', function($q) use ($id) {
+                    $q->where('product_id', $id);
+                })->exists();
+        }
+
         return response()->json([
             'success' => true,
-            'data' => $product
+            'data' => $product,
+            'can_review' => $canReview
         ]);
     }
 
@@ -508,6 +519,12 @@ class MobileApiController extends Controller
             'parent_id' => 'nullable|exists:reviews,id',
         ]);
 
+        if ($request->parent_id) {
+            if (!Auth::user()->is_admin) {
+                return response()->json(['success' => false, 'message' => 'Chỉ quản trị viên mới có quyền phản hồi đánh giá.'], 403);
+            }
+        }
+
         $rating = $request->rating;
         if ($rating) {
             $hasBought = Order::where('user_id', Auth::id())
@@ -518,6 +535,16 @@ class MobileApiController extends Controller
 
             if (!$hasBought) {
                 $rating = null; // Downgrade to just a comment if not bought
+            } else {
+                // Check if already rated
+                $alreadyRated = \App\Models\Review::where('user_id', Auth::id())
+                    ->where('product_id', $request->product_id)
+                    ->whereNotNull('rating')
+                    ->exists();
+                
+                if ($alreadyRated) {
+                    $rating = null; // Already rated, downgrade to comment
+                }
             }
         }
 

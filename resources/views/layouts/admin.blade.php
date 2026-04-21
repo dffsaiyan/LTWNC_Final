@@ -668,8 +668,7 @@
                 <a href="/" class="sidebar-link" target="_blank">
                     <img src="{{ asset('images/icon/external_icon.png') }}" style="width: 18px; height: 18px; object-fit: contain; margin-right: 2px;"> Xem cửa hàng
                 </a>
-                <a href="{{ route('logout') }}" class="sidebar-link"
-                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <a href="{{ route('logout') }}" class="sidebar-link confirm-logout-app">
                     <img src="{{ asset('images/icon/logout_icon.png') }}" style="width: 18px; height: 18px; object-fit: contain; margin-right: 2px;"> Đăng xuất
                 </a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
@@ -746,6 +745,34 @@
         }
         setInterval(updateClock, 1000);
         updateClock();
+
+        // 🚪 ELITE LOGOUT CONFIRMATION
+        document.addEventListener('click', function(e) {
+            const logoutLink = e.target.closest('.confirm-logout-app');
+            if (logoutLink) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Xác nhận thoát?',
+                    text: 'Bạn có chắc chắn muốn đăng xuất tài khoản DDH Elite?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: 'Đăng xuất ngay',
+                    cancelButtonText: 'Quay lại',
+                    reverseButtons: true,
+                    customClass: {
+                        popup: 'rounded-4 shadow-lg border-0',
+                        confirmButton: 'rounded-pill px-4 fw-bold',
+                        cancelButton: 'rounded-pill px-4 fw-bold'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('logout-form').submit();
+                    }
+                });
+            }
+        });
 
         // 🛡️ PREMIUM CONFIRMATION DIALOG (SweetAlert2)
         document.addEventListener('click', function(e) {

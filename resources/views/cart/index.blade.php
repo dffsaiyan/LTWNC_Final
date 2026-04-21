@@ -332,7 +332,7 @@
                         <span class="x-small fw-bold text-muted text-uppercase d-none d-md-inline" style="letter-spacing: 0.5px;">
                             <span class="text-dark" id="cartTotalItemsCount">{{ count($cart) }}</span> siêu phẩm
                         </span>
-                        <a href="{{ route('cart.clear') }}" class="text-decoration-none text-muted fw-bold text-uppercase hover-text-danger transition-all d-flex align-items-center gap-2 opacity-75 responsive-action-text" style="letter-spacing: 0.8px; font-size: 13px;">
+                        <a href="{{ route('cart.clear') }}" class="text-decoration-none text-muted fw-bold text-uppercase hover-text-danger transition-all d-flex align-items-center gap-2 opacity-75 responsive-action-text confirm-clear-cart" style="letter-spacing: 0.8px; font-size: 13px;">
                             <i class="fas fa-trash-alt text-danger" style="font-size: 13px;"></i> Làm trống
                         </a>
                     </div>

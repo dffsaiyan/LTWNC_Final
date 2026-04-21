@@ -230,7 +230,10 @@
                                     </div>
                                 @endif
                                 <div class="mb-3">
-                                    <textarea name="message" class="form-control bg-light border-0 rounded-4 p-3" rows="3" placeholder="{{ $canReview ? 'Chia sẻ cảm nhận của bạn về sản phẩm này...' : 'Nhập câu hỏi hoặc bình luận của bạn...' }}" required></textarea>
+                                    <textarea name="message" class="form-control bg-light border-0 rounded-4 p-3 @error('message') is-invalid @enderror" rows="3" placeholder="{{ $canReview ? 'Chia sẻ cảm nhận của bạn về sản phẩm này...' : 'Nhập câu hỏi hoặc bình luận của bạn...' }}" required>{{ old('message') }}</textarea>
+                                    @error('message')
+                                        <div class="invalid-feedback px-2">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="text-end">
                                     <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
@@ -246,99 +249,192 @@
                         </div>
                     @endauth
 
-                    <!-- Danh sách bình luận & phản hồi -->
-                    <div class="review-list">
-                        @if($product->reviews->count() > 0)
-                            @foreach($product->reviews as $review)
-                                <div class="review-item {{ !$loop->last ? 'mb-5 pb-4 border-bottom' : '' }}">
-                                    <!-- Parent Comment -->
-                                    <div class="d-flex align-items-start gap-3">
-                                        <div class="avatar-circle shadow-sm" style="width: 48px; height: 48px; min-width: 48px; background: #f8fafc; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 2px solid white;">
-                                            @if($review->user->avatar)
-                                                <img src="{{ asset($review->user->avatar) }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                            @elseif($review->user->social_avatar)
-                                                <img src="{{ $review->user->social_avatar }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                            @else
-                                                <div class="bg-primary text-white w-100 h-100 d-flex align-items-center justify-content-center fw-bold">{{ mb_substr($review->user->name, 0, 1) }}</div>
-                                            @endif
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <div class="d-flex justify-content-between align-items-start mb-1">
-                                                <div>
-                                                    <span class="fw-bold text-dark small me-2">{{ str_replace('+', ' ', $review->user->name) }}</span>
-                                                    @if($review->user->is_admin)
-                                                        <span class="badge bg-danger rounded-pill x-small px-2">Quản trị viên</span>
+                    <!-- Tab Headers -->
+                    <ul class="nav nav-tabs border-0 mb-4 gap-2" id="reviewTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active rounded-pill px-4 fw-bold small border-0" id="ratings-tab" data-bs-toggle="tab" data-bs-target="#ratings-pane" type="button" role="tab">
+                                Đánh giá ({{ $product->reviews->whereNotNull('rating')->count() }})
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link rounded-pill px-4 fw-bold small border-0" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments-pane" type="button" role="tab">
+                                Hỏi đáp ({{ $product->reviews->whereNull('rating')->count() }})
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="reviewTabsContent">
+                        <!-- Ratings Pane -->
+                        <div class="tab-pane fade show active" id="ratings-pane" role="tabpanel" tabindex="0">
+                            <div class="review-list">
+                                @php $ratings = $product->reviews->whereNotNull('rating'); @endphp
+                                @if($ratings->count() > 0)
+                                    @foreach($ratings as $review)
+                                        <div class="review-item {{ !$loop->last ? 'mb-5 pb-4 border-bottom' : '' }}">
+                                            <div class="d-flex align-items-start gap-3">
+                                                <div class="avatar-circle shadow-sm" style="width: 48px; height: 48px; min-width: 48px; background: #f8fafc; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 2px solid white;">
+                                                    @if($review->user->avatar)
+                                                        <img src="{{ asset($review->user->avatar) }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    @elseif($review->user->social_avatar)
+                                                        <img src="{{ $review->user->social_avatar }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    @else
+                                                        <div class="bg-primary text-white w-100 h-100 d-flex align-items-center justify-content-center fw-bold">{{ mb_substr($review->user->name, 0, 1) }}</div>
                                                     @endif
                                                 </div>
-                                                <span class="text-muted review-time fw-medium text-nowrap ms-2">{{ $review->created_at->diffForHumans() }}</span>
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex justify-content-between align-items-start mb-1">
+                                                        <div>
+                                                            <span class="fw-bold text-dark small me-2">{{ str_replace('+', ' ', $review->user->name) }}</span>
+                                                        </div>
+                                                        <span class="text-muted review-time fw-medium text-nowrap ms-2">{{ $review->created_at->diffForHumans() }}</span>
+                                                    </div>
+                                                    
+                                                    <div class="text-warning mb-2" style="font-size: 10px;">
+                                                        @for($i=1; $i<=5; $i++)
+                                                            <i class="fas fa-star {{ $i <= $review->rating ? '' : 'opacity-25' }}"></i>
+                                                        @endfor
+                                                    </div>
+                                                    
+                                                    <p class="text-dark mb-2 small lh-lg" style="white-space: pre-line;">{{ $review->message }}</p>
+                                                    
+                                                    @auth
+                                                        @if(auth()->user()->is_admin)
+                                                            <button class="btn btn-link p-0 text-primary text-decoration-none xx-small fw-bold" onclick="toggleReplyForm({{ $review->id }})">
+                                                                <i class="fas fa-reply me-1"></i> Trả lời
+                                                            </button>
+                                                            <div id="reply-form-{{ $review->id }}" class="mt-3 d-none animate__animated animate__fadeIn">
+                                                                <form action="{{ route('reviews.reply', $review->id) }}" method="POST">
+                                                                    @csrf
+                                                                    <div class="input-group">
+                                                                        <input type="text" name="message" class="form-control form-control-sm border-0 bg-light rounded-start-pill px-3" placeholder="Nhập phản hồi của bạn..." required>
+                                                                        <button class="btn btn-primary btn-sm rounded-end-pill px-3 fw-bold" type="submit">Gửi</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        @endif
+                                                    @endauth
+                                                </div>
                                             </div>
-                                            
-                                            @if($review->rating)
-                                                <div class="text-warning mb-2" style="font-size: 10px;">
-                                                    @for($i=1; $i<=5; $i++)
-                                                        <i class="fas fa-star {{ $i <= $review->rating ? '' : 'opacity-25' }}"></i>
-                                                    @endfor
+
+                                            @if($review->replies->count() > 0)
+                                                <div class="replies-container mt-4 ms-5 border-start ps-4">
+                                                    @foreach($review->replies as $reply)
+                                                        <div class="reply-item mb-3">
+                                                            <div class="d-flex align-items-start gap-3">
+                                                                <div class="avatar-circle shadow-sm" style="width: 32px; height: 32px; min-width: 32px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                                                    @if($reply->user->avatar)
+                                                                        <img src="{{ asset($reply->user->avatar) }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                                    @elseif($reply->user->social_avatar)
+                                                                        <img src="{{ $reply->user->social_avatar }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                                    @else
+                                                                        <div class="bg-secondary text-white w-100 h-100 d-flex align-items-center justify-content-center xx-small fw-bold">{{ mb_substr($reply->user->name, 0, 1) }}</div>
+                                                                    @endif
+                                                                </div>
+                                                                <div class="bg-light p-3 rounded-4 flex-grow-1 border">
+                                                                    <div class="d-flex justify-content-between mb-1 gap-2">
+                                                                        <span class="fw-bold text-dark x-small">{{ str_replace('+', ' ', $reply->user->name) }} @if($reply->user->is_admin) <i class="fas fa-check-circle text-primary ms-1"></i> @endif</span>
+                                                                        <span class="text-muted review-time text-nowrap">{{ $reply->created_at->diffForHumans() }}</span>
+                                                                    </div>
+                                                                    <p class="text-muted mb-0 small lh-sm">{{ $reply->message }}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
                                                 </div>
                                             @endif
-                                            
-                                            <p class="text-dark mb-2 small lh-lg" style="white-space: pre-line;">{{ $review->message }}</p>
-                                            
-                                            @auth
-                                                @if(auth()->user()->is_admin)
-                                                    <button class="btn btn-link p-0 text-primary text-decoration-none xx-small fw-bold" onclick="toggleReplyForm({{ $review->id }})">
-                                                        <i class="fas fa-reply me-1"></i> Trả lời
-                                                    </button>
-                                                    
-                                                    <!-- Reply Form (Hidden) -->
-                                                    <div id="reply-form-{{ $review->id }}" class="mt-3 d-none animate__animated animate__fadeIn">
-                                                        <form action="{{ route('reviews.reply', $review->id) }}" method="POST">
-                                                            @csrf
-                                                            <div class="input-group">
-                                                                <input type="text" name="message" class="form-control form-control-sm border-0 bg-light rounded-start-pill px-3" placeholder="Nhập phản hồi của bạn..." required>
-                                                                <button class="btn btn-primary btn-sm rounded-end-pill px-3 fw-bold" type="submit">Gửi</button>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                @endif
-                                            @endauth
                                         </div>
+                                    @endforeach
+                                @else
+                                    <div class="text-center py-5">
+                                        <i class="far fa-star text-light fs-1 mb-3"></i>
+                                        <p class="text-muted small">Sản phẩm này chưa có đánh giá sao nào.</p>
                                     </div>
-
-                                    <!-- Replies -->
-                                    @if($review->replies->count() > 0)
-                                        <div class="replies-container mt-4 ms-5 border-start ps-4">
-                                            @foreach($review->replies as $reply)
-                                                <div class="reply-item mb-3">
-                                                    <div class="d-flex align-items-start gap-3">
-                                                        <div class="avatar-circle shadow-sm" style="width: 32px; height: 32px; min-width: 32px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                                                            @if($reply->user->avatar)
-                                                                <img src="{{ asset($reply->user->avatar) }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                                            @elseif($reply->user->social_avatar)
-                                                                <img src="{{ $reply->user->social_avatar }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                                            @else
-                                                                <div class="bg-secondary text-white w-100 h-100 d-flex align-items-center justify-content-center xx-small fw-bold">{{ mb_substr($reply->user->name, 0, 1) }}</div>
-                                                            @endif
-                                                        </div>
-                                                        <div class="bg-light p-3 rounded-4 flex-grow-1 border">
-                                                            <div class="d-flex justify-content-between mb-1 gap-2">
-                                                                <span class="fw-bold text-dark x-small">{{ str_replace('+', ' ', $reply->user->name) }} @if($reply->user->is_admin) <i class="fas fa-check-circle text-primary ms-1"></i> @endif</span>
-                                                                <span class="text-muted review-time text-nowrap">{{ $reply->created_at->diffForHumans() }}</span>
-                                                            </div>
-                                                            <p class="text-muted mb-0 small lh-sm">{{ $reply->message }}</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    @endif
-                                </div>
-                            @endforeach
-                        @else
-                            <div class="text-center py-5">
-                                <i class="far fa-comments text-light fs-1 mb-3"></i>
-                                <p class="text-muted small">Sản phẩm này chưa có bình luận nào. Hãy là người đầu tiên!</p>
+                                @endif
                             </div>
-                        @endif
+                        </div>
+
+                        <!-- Comments Pane -->
+                        <div class="tab-pane fade" id="comments-pane" role="tabpanel" tabindex="0">
+                            <div class="review-list">
+                                @php $comments = $product->reviews->whereNull('rating'); @endphp
+                                @if($comments->count() > 0)
+                                    @foreach($comments as $review)
+                                        <div class="review-item {{ !$loop->last ? 'mb-5 pb-4 border-bottom' : '' }}">
+                                            <div class="d-flex align-items-start gap-3">
+                                                <div class="avatar-circle shadow-sm" style="width: 48px; height: 48px; min-width: 48px; background: #f8fafc; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 2px solid white;">
+                                                    @if($review->user->avatar)
+                                                        <img src="{{ asset($review->user->avatar) }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    @elseif($review->user->social_avatar)
+                                                        <img src="{{ $review->user->social_avatar }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                    @else
+                                                        <div class="bg-primary text-white w-100 h-100 d-flex align-items-center justify-content-center fw-bold">{{ mb_substr($review->user->name, 0, 1) }}</div>
+                                                    @endif
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex justify-content-between align-items-start mb-1">
+                                                        <div>
+                                                            <span class="fw-bold text-dark small me-2">{{ str_replace('+', ' ', $review->user->name) }}</span>
+                                                        </div>
+                                                        <span class="text-muted review-time fw-medium text-nowrap ms-2">{{ $review->created_at->diffForHumans() }}</span>
+                                                    </div>
+                                                    
+                                                    <p class="text-dark mb-2 small lh-lg" style="white-space: pre-line;">{{ $review->message }}</p>
+                                                    
+                                                    @auth
+                                                        @if(auth()->user()->is_admin)
+                                                            <button class="btn btn-link p-0 text-primary text-decoration-none xx-small fw-bold" onclick="toggleReplyForm({{ $review->id }})">
+                                                                <i class="fas fa-reply me-1"></i> Trả lời
+                                                            </button>
+                                                            <div id="reply-form-{{ $review->id }}" class="mt-3 d-none animate__animated animate__fadeIn">
+                                                                <form action="{{ route('reviews.reply', $review->id) }}" method="POST">
+                                                                    @csrf
+                                                                    <div class="input-group">
+                                                                        <input type="text" name="message" class="form-control form-control-sm border-0 bg-light rounded-start-pill px-3" placeholder="Nhập phản hồi của bạn..." required>
+                                                                        <button class="btn btn-primary btn-sm rounded-end-pill px-3 fw-bold" type="submit">Gửi</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        @endif
+                                                    @endauth
+                                                </div>
+                                            </div>
+
+                                            @if($review->replies->count() > 0)
+                                                <div class="replies-container mt-4 ms-5 border-start ps-4">
+                                                    @foreach($review->replies as $reply)
+                                                        <div class="reply-item mb-3">
+                                                            <div class="d-flex align-items-start gap-3">
+                                                                <div class="avatar-circle shadow-sm" style="width: 32px; height: 32px; min-width: 32px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                                                    @if($reply->user->avatar)
+                                                                        <img src="{{ asset($reply->user->avatar) }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                                    @elseif($reply->user->social_avatar)
+                                                                        <img src="{{ $reply->user->social_avatar }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                                    @else
+                                                                        <div class="bg-secondary text-white w-100 h-100 d-flex align-items-center justify-content-center xx-small fw-bold">{{ mb_substr($reply->user->name, 0, 1) }}</div>
+                                                                    @endif
+                                                                </div>
+                                                                <div class="bg-light p-3 rounded-4 flex-grow-1 border">
+                                                                    <div class="d-flex justify-content-between mb-1 gap-2">
+                                                                        <span class="fw-bold text-dark x-small">{{ str_replace('+', ' ', $reply->user->name) }} @if($reply->user->is_admin) <i class="fas fa-check-circle text-primary ms-1"></i> @endif</span>
+                                                                        <span class="text-muted review-time text-nowrap">{{ $reply->created_at->diffForHumans() }}</span>
+                                                                    </div>
+                                                                    <p class="text-muted mb-0 small lh-sm">{{ $reply->message }}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="text-center py-5">
+                                        <i class="far fa-comments text-light fs-1 mb-3"></i>
+                                        <p class="text-muted small">Sản phẩm này chưa có bình luận hỏi đáp nào.</p>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -379,7 +475,7 @@
             <div class="col-6 col-md-4 col-lg-3">
                 <div class="card border-0 shadow-sm rounded-4 h-100 bg-white pdp-rel-card overflow-hidden">
                     <a href="{{ route('products.show', $rel->slug) }}" class="p-3 d-block text-center position-relative">
-                        <img src="{{ $rel->image ? asset($rel->image) : 'https://via.placeholder.com/300x300' }}" class="img-fluid rounded-3" alt="{{ $rel->name }}" style="height: 180px; object-fit: contain;">
+                        <img src="{{ $rel->image ? asset($rel->image) : 'https://via.placeholder.com/300x300' }}" class="img-fluid rounded-3 d-block mx-auto" alt="{{ $rel->name }}" style="height: 180px; object-fit: contain;">
                         @if($rel->price > $rel->sale_price && $rel->sale_price > 0)
                             <span class="position-absolute top-0 start-0 m-2 badge bg-danger rounded-pill small">-{{ round((($rel->price - $rel->sale_price) / $rel->price) * 100) }}%</span>
                         @endif
@@ -722,6 +818,22 @@
     .cursor-pointer { cursor: pointer; }
     .star-label:hover i { transform: scale(1.2); transition: transform 0.2s ease; }
     .rating-input label:hover ~ label i { color: #e2e8f0 !important; }
+
+    /* ELITE TABS */
+    #reviewTabs .nav-link {
+        color: #64748b;
+        background: #f1f5f9;
+        transition: all 0.3s ease;
+    }
+    #reviewTabs .nav-link:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+    #reviewTabs .nav-link.active {
+        background: #f97316 !important;
+        color: white !important;
+        box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+    }
 </style>
 
 
