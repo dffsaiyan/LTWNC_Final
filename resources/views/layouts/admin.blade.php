@@ -504,6 +504,64 @@
         .delay-3 { animation-delay: .18s; }
         .delay-4 { animation-delay: .24s; }
 
+        /* ── ELITE TOAST (ADMIN) ────────────────── */
+        .elite-toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .elite-toast {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border-left: 4px solid var(--ddh-orange);
+            transform: translateX(120%);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            min-width: 320px;
+        }
+
+        .elite-toast.active {
+            transform: translateX(0);
+        }
+
+        .elite-toast-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(247, 148, 30, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ddh-orange);
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .elite-toast-content .toast-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .elite-toast-content .toast-msg {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
         /* ── SIDEBAR OVERLAY ELITE ──────────────── */
         #sidebar-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -661,27 +719,14 @@
             <!-- Page Body -->
             <main class="page-body">
                 <div class="admin-container">
-                    @if(session('success'))
-                        <div class="admin-alert admin-alert-success animate-in">
-                            <i class="fas fa-circle-check"></i> {{ session('success') }}
-                        </div>
-                    @endif
-                    @if(session('error'))
-                        <div class="admin-alert admin-alert-error animate-in">
-                            <i class="fas fa-circle-xmark"></i> {{ session('error') }}
-                        </div>
-                    @endif
-                    @if(session('info'))
-                        <div class="admin-alert admin-alert-info animate-in">
-                            <i class="fas fa-circle-info"></i> {{ session('info') }}
-                        </div>
-                    @endif
-
                     @yield('content')
                 </div>
             </main>
         </div>
     </div>
+
+    <!-- ELITE TOAST CONTAINER -->
+    <div class="elite-toast-container" id="eliteToastContainer"></div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -737,6 +782,53 @@
                     form.submit();
                 }
             });
+        });
+
+        // 🚀 ELITE TOAST SYSTEM (ADMIN)
+        function showEliteToast(message, type = 'success') {
+            const container = document.getElementById('eliteToastContainer');
+            if(!container) return;
+            
+            const toast = document.createElement('div');
+            toast.className = 'elite-toast';
+            
+            let iconClass = 'fa-check';
+            if(type === 'error') iconClass = 'fa-circle-xmark';
+            if(type === 'info') iconClass = 'fa-circle-info';
+            if(type === 'warning') iconClass = 'fa-triangle-exclamation';
+
+            toast.innerHTML = `
+                <div class="elite-toast-icon">
+                    <i class="fas ${iconClass}"></i>
+                </div>
+                <div class="elite-toast-content">
+                    <div class="toast-label">Hệ thống</div>
+                    <div class="toast-msg">${message}</div>
+                </div>
+            `;
+            container.appendChild(toast);
+            
+            // Trigger animation
+            setTimeout(() => toast.classList.add('active'), 100);
+            
+            // Auto remove
+            setTimeout(() => {
+                toast.classList.remove('active');
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        }
+
+        // Trigger session toasts
+        document.addEventListener('DOMContentLoaded', function() {
+            @if(session('success'))
+                showEliteToast("{{ session('success') }}", 'success');
+            @endif
+            @if(session('error'))
+                showEliteToast("{{ session('error') }}", 'error');
+            @endif
+            @if(session('info'))
+                showEliteToast("{{ session('info') }}", 'info');
+            @endif
         });
     </script>
     @stack('scripts')
