@@ -14,8 +14,16 @@ use GuzzleHttp\Client;
 
 class SocialController extends Controller
 {
-    public function redirectToProvider($provider)
+    public function redirectToProvider(Request $request, $provider)
     {
+        if ($request->has('mobile')) {
+            session(['is_mobile_social' => true]);
+        }
+
+        if ($provider == 'google') {
+            return Socialite::driver($provider)->with(['prompt' => 'select_account'])->redirect();
+        }
+
         return Socialite::driver($provider)->redirect();
     }
 
@@ -67,6 +75,12 @@ class SocialController extends Controller
                     'password' => null, // Không dùng mật khẩu cho Social Login
                 ]);
                 Auth::login($newUser, true);
+            }
+
+            if (session('is_mobile_social')) {
+                $token = Auth::user()->createToken('mobile-app-social')->plainTextToken;
+                session()->forget('is_mobile_social');
+                return redirect('/mobile-social-success?token=' . rawurlencode($token) . '&user=' . rawurlencode(json_encode(Auth::user())));
             }
 
             return redirect('/')->with('success', 'Chào mừng thành viên Elite! Bạn đã đăng nhập thành công.');

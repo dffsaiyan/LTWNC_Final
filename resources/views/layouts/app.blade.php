@@ -7,6 +7,7 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="zalo-platform-site-verification" content="VF-O1ep8C1zHrvWZqlTEUZ7RtcJThGixEJ8r" />
 
     <title>DDH Electronics - Siêu thị máy tính & Gear cao cấp</title>
     <link rel="icon" type="image/jpeg" href="{{ asset('images/favicon.jpg') }}">
