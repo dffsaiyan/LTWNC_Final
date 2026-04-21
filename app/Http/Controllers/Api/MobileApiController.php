@@ -27,11 +27,22 @@ class MobileApiController extends Controller
         try {
             $banners = Banner::where('status', 1)->get();
             $slides = Slide::where('status', 1)->get();
-            $featuredProducts = Product::where('is_active', 1)->with('category')->limit(8)->get();
-            $newArrivals = Product::orderBy('created_at', 'desc')->with('category')->limit(8)->get();
-            $flashSales = Product::whereNotNull('flash_sale_end')
-                ->where('flash_sale_end', '>', date('Y-m-d H:i:s'))
+            $flashSaleEnd = \App\Models\Setting::where('key', 'flash_sale_end')->first()->value ?? null;
+            $flashSales = Product::where('is_flash_sale', 1)
+                ->where('sale_price', '>', 0)
+                ->where('stock', '>', 0)
                 ->with('category')
+                ->limit(8)
+                ->get();
+            
+            $newArrivals = Product::orderBy('created_at', 'desc')->with('category')->limit(8)->get();
+            
+            // Filter popular to avoid duplication
+            $flashIds = $flashSales->pluck('id')->toArray();
+            $featuredProducts = Product::where('is_active', 1)
+                ->whereNotIn('id', $flashIds)
+                ->with('category')
+                ->limit(8)
                 ->get();
 
             return response()->json([
@@ -42,7 +53,7 @@ class MobileApiController extends Controller
                     'popular' => $featuredProducts,
                     'new_arrivals' => $newArrivals,
                     'flash_sale' => $flashSales,
-                    'flash_sale_end' => $flashSales->count() > 0 ? $flashSales->first()->flash_sale_end : null
+                    'flash_sale_end' => $flashSaleEnd
                 ]
             ]);
         } catch (\Exception $e) {
