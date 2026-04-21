@@ -65,11 +65,11 @@ class AccountController extends Controller implements HasMiddleware
             'new_password' => 'nullable|min:8|confirmed',
         ]);
 
-        $user->name = $request->name;
+        $user->name = urldecode($request->name);
         $user->phone = $request->phone;
         $user->province_id = $request->province_id;
         $user->district_id = $request->district_id;
-        $user->address = $request->address;
+        $user->address = urldecode($request->address);
 
         if ($request->hasFile('avatar')) {
             $imageName = time().'.'.$request->avatar->extension();  

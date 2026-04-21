@@ -1855,7 +1855,7 @@
                                         {{ mb_strtoupper(mb_substr($user->name, 0, 1, 'UTF-8')) }}
                                     @endif
                                 </div>
-                                <span class="d-none d-xl-inline-block text-dark small fw-bold">{{ Auth::user()->name }}</span>
+                                <span class="d-none d-xl-inline-block text-dark small fw-bold">{{ str_replace('+', ' ', Auth::user()->name) }}</span>
                             </a>
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
                         @endguest

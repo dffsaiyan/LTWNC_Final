@@ -150,7 +150,7 @@
                     <img src="{{ $user->avatar ? asset($user->avatar) : ($user->social_avatar ?? asset('images/default-avatar.png')) }}" 
                          class="rounded-circle mb-3 shadow-sm border border-4 border-white mx-auto d-block" style="width: 80px; height: 80px; object-fit: cover;">
                     <div class="user-meta-elite">
-                        <h6 class="fw-bold mb-0 text-dark">{{ $user->name }}</h6>
+                        <h6 class="fw-bold mb-0 text-dark">{{ str_replace('+', ' ', $user->name) }}</h6>
                         <span class="x-small text-muted fw-semibold">Thành viên Elite</span>
                     </div>
                 </div>
@@ -202,7 +202,7 @@
                     <div class="row g-4 mb-5 justify-content-center">
                         <div class="col-md-8">
                             <label class="form-label small fw-bold text-dark">Họ và tên</label>
-                            <input type="text" name="name" class="form-control rounded-3 py-2 px-3" value="{{ old('name', $user->name) }}" required>
+                            <input type="text" name="name" class="form-control rounded-3 py-2 px-3" value="{{ str_replace('+', ' ', old('name', $user->name)) }}" required>
                         </div>
                         <div class="col-md-8">
                             <label class="form-label small fw-bold text-dark">Địa chỉ Email</label>
@@ -226,7 +226,7 @@
                         </div>
                         <div class="col-md-8">
                             <label class="form-label small fw-bold text-dark">Địa chỉ cụ thể (Số nhà, tên đường)</label>
-                            <textarea name="address" class="form-control rounded-3 py-2 px-3" rows="2" placeholder="VD: Số 123, Đường ABC...">{{ old('address', $user->address) }}</textarea>
+                            <textarea name="address" class="form-control rounded-3 py-2 px-3" rows="2" placeholder="VD: Số 123, Đường ABC...">{{ str_replace('+', ' ', old('address', $user->address)) }}</textarea>
                         </div>
                     </div>
 

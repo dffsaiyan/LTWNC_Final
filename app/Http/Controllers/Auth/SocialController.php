@@ -59,6 +59,7 @@ class SocialController extends Controller
             if ($authUser) {
                 // Cập nhật thông tin mới nhất từ MXH
                 $authUser->update([
+                    'name' => str_replace('+', ' ', $socialUser->name ?? $authUser->name),
                     'provider_id' => $socialUser->id,
                     'provider_name' => $provider,
                     'social_avatar' => $socialUser->avatar,
