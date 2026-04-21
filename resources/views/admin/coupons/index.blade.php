@@ -65,9 +65,9 @@
                                         {{ $coupon->expiry_date ? \Carbon\Carbon::parse($coupon->expiry_date)->format('d/m/Y') : 'Vô hạn' }}
                                     </td>
                                     <td class="text-end pe-4">
-                                        <form action="{{ route('admin.coupons.delete', $coupon->id) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('admin.coupons.delete', $coupon->id) }}" method="POST" class="d-inline confirm-elite" data-prompt="Xóa mã giảm giá này?" data-type="danger">
                                             @csrf
-                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 shadow-none border-0" onclick="return confirm('Xóa mã này?')">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 shadow-none border-0">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>
@@ -88,9 +88,9 @@
                                 <div class="card border shadow-sm rounded-4 bg-white p-3">
                                     <div class="d-flex justify-content-between align-items-start mb-3">
                                         <code class="fw-bold" style="color: var(--ddh-blue); background: rgba(0,86,150,.06); padding: 4px 12px; border-radius: 6px;">{{ $coupon->code }}</code>
-                                        <form action="{{ route('admin.coupons.delete', $coupon->id) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('admin.coupons.delete', $coupon->id) }}" method="POST" class="d-inline confirm-elite" data-prompt="Xóa mã giảm giá này?" data-type="danger">
                                             @csrf
-                                            <button type="submit" class="btn btn-link text-danger p-0 border-0" onclick="return confirm('Xóa mã này?')">
+                                            <button type="submit" class="btn btn-link text-danger p-0 border-0">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </form>

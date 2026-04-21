@@ -92,7 +92,7 @@
                                     <button class="btn btn-sm btn-light rounded-pill px-3 me-1" onclick="editBrand({{ $brand->id }}, '{{ addslashes($brand->name) }}', '{{ $brand->logo ? asset('storage/'.$brand->logo) : '' }}')">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <form action="{{ route('admin.brands.delete', $brand->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Xóa hãng này và gỡ bỏ khỏi toàn bộ sản phẩm?')">
+                                    <form action="{{ route('admin.brands.delete', $brand->id) }}" method="POST" class="d-inline confirm-elite" data-prompt="Xóa hãng này và gỡ bỏ khỏi toàn bộ sản phẩm?" data-type="danger">
                                         @csrf
                                         <button class="btn btn-sm btn-outline-danger rounded-pill px-3">
                                             <i class="fas fa-trash"></i>
@@ -129,7 +129,7 @@
                                     <button class="btn btn-sm btn-light rounded-pill flex-fill py-2 fw-bold" onclick="editBrand({{ $brand->id }}, '{{ addslashes($brand->name) }}', '{{ $brand->logo ? asset('storage/'.$brand->logo) : '' }}')" style="font-size: 0.75rem;">
                                         <i class="fas fa-edit me-1"></i> Sửa
                                     </button>
-                                    <form action="{{ route('admin.brands.delete', $brand->id) }}" method="POST" class="flex-fill" onsubmit="return confirm('Xóa hãng này?')">
+                                    <form action="{{ route('admin.brands.delete', $brand->id) }}" method="POST" class="flex-fill confirm-elite" data-prompt="Xóa hãng này?" data-type="danger">
                                         @csrf
                                         <button class="btn btn-sm btn-outline-danger rounded-pill w-100 py-2" style="font-size: 0.75rem;">
                                             <i class="fas fa-trash"></i>
