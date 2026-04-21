@@ -11,6 +11,7 @@ use App\Models\Coupon;
 use App\Models\Post;
 use App\Models\Banner;
 use App\Models\Slide;
+use App\Models\Wishlist;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -481,8 +482,23 @@ class MobileApiController extends Controller
 
     public function getWishlist(Request $request)
     {
-        $wishlist = \App\Models\Wishlist::where('user_id', $request->user()->id)->with('product.category')->get()->map(fn($i) => $i->product);
-        return response()->json(['success' => true, 'data' => $wishlist]);
+        try {
+            $wishlist = Wishlist::where('user_id', $request->user()->id)
+                ->with('product.category')
+                ->get()
+                ->map(fn($i) => $i->product)
+                ->filter(); // Remove null products if any
+
+            return response()->json([
+                'success' => true, 
+                'data' => $wishlist->values() // Ensure it's an array
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error in getWishlist: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function toggleWishlist(Request $request, $productId)

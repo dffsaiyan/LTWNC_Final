@@ -21,6 +21,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Ép buộc HTTPS nếu APP_URL cấu hình là https (để fix lỗi Mixed Content trên Ngrok)
+        if (str_contains(config('app.url'), 'https://')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         Paginator::useBootstrapFive();
         // Việt hóa Email khôi phục mật khẩu
         ResetPassword::toMailUsing(function ($notifiable, $token) {

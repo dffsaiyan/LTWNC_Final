@@ -10,7 +10,7 @@
     <meta name="zalo-platform-site-verification" content="VF-O1ep8C1zHrvWZqlTEUZ7RtcJThGixEJ8r" />
 
     <title>DDH Electronics - Siêu thị máy tính & Gear cao cấp</title>
-    <link rel="icon" type="image/jpeg" href="{{ asset('images/favicon.jpg') }}">
+    <link rel="icon" type="image/jpeg" href="{{ asset('images/favicon.jpg') }}?v={{ time() }}">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
