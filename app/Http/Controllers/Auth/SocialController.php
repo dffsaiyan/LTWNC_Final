@@ -65,9 +65,12 @@ class SocialController extends Controller
                 ]);
                 Auth::login($authUser, true);
             } else {
+                // Làm sạch tên trước khi lưu
+                $cleanName = str_replace('+', ' ', $socialUser->name ?? $socialUser->nickname ?? 'Elite User ' . $socialUser->id);
+                
                 // Tạo User mới nếu chưa tồn tại
                 $newUser = User::create([
-                    'name' => $socialUser->name ?? $socialUser->nickname ?? 'Elite User ' . $socialUser->id,
+                    'name' => $cleanName,
                     'email' => $userEmail,
                     'provider_id' => $socialUser->id,
                     'provider_name' => $provider,
@@ -94,7 +97,7 @@ class SocialController extends Controller
                     'social_avatar' => $avatar,
                     'phone' => $user->phone ?? '',
                     'address' => str_replace('+', ' ', $user->address ?? '')
-                ]);
+                ], '', '&', PHP_QUERY_RFC3986);
 
                 return redirect('/mobile-social-success?' . $query);
             }

@@ -491,14 +491,32 @@ class MobileApiController extends Controller
     {
         $request->validate([
             'product_id' => 'required|exists:products,id',
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string',
+            'rating' => 'nullable|integer|min:1|max:5',
+            'message' => 'required|string',
+            'parent_id' => 'nullable|exists:reviews,id',
         ]);
 
-        $review = \App\Models\Review::updateOrCreate(
-            ['user_id' => Auth::id(), 'product_id' => $request->product_id],
-            ['rating' => $request->rating, 'comment' => $request->comment, 'status' => 'approved']
-        );
+        $rating = $request->rating;
+        if ($rating) {
+            $hasBought = Order::where('user_id', Auth::id())
+                ->where('status', 'completed')
+                ->whereHas('items', function($q) use ($request) {
+                    $q->where('product_id', $request->product_id);
+                })->exists();
+
+            if (!$hasBought) {
+                $rating = null; // Downgrade to just a comment if not bought
+            }
+        }
+
+        $review = \App\Models\Review::create([
+            'user_id' => Auth::id(),
+            'product_id' => $request->product_id,
+            'rating' => $rating,
+            'message' => $request->message,
+            'parent_id' => $request->parent_id,
+            'is_visible' => 1
+        ]);
 
         return response()->json(['success' => true, 'data' => $review]);
     }

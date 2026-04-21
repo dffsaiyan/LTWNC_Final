@@ -28,7 +28,7 @@
                 @endif
 
                 <img src="{{ $product->image ? asset($product->image) : 'https://via.placeholder.com/600x500/f8f9fa/666666?text=' . urlencode($product->name) }}" 
-                     class="img-fluid pdp-main-img" 
+                     class="img-fluid pdp-main-img d-block mx-auto" 
                      id="mainImage"
                      alt="{{ $product->name }}"
                      style="max-height: 450px; object-fit: contain;">
@@ -265,7 +265,7 @@
                                         <div class="flex-grow-1">
                                             <div class="d-flex justify-content-between align-items-start mb-1">
                                                 <div>
-                                                    <span class="fw-bold text-dark small me-2">{{ $review->user->name }}</span>
+                                                    <span class="fw-bold text-dark small me-2">{{ str_replace('+', ' ', $review->user->name) }}</span>
                                                     @if($review->user->is_admin)
                                                         <span class="badge bg-danger rounded-pill x-small px-2">Quản trị viên</span>
                                                     @endif
@@ -321,7 +321,7 @@
                                                         </div>
                                                         <div class="bg-light p-3 rounded-4 flex-grow-1 border">
                                                             <div class="d-flex justify-content-between mb-1 gap-2">
-                                                                <span class="fw-bold text-dark x-small">{{ $reply->user->name }} @if($reply->user->is_admin) <i class="fas fa-check-circle text-primary ms-1"></i> @endif</span>
+                                                                <span class="fw-bold text-dark x-small">{{ str_replace('+', ' ', $reply->user->name) }} @if($reply->user->is_admin) <i class="fas fa-check-circle text-primary ms-1"></i> @endif</span>
                                                                 <span class="text-muted review-time text-nowrap">{{ $reply->created_at->diffForHumans() }}</span>
                                                             </div>
                                                             <p class="text-muted mb-0 small lh-sm">{{ $reply->message }}</p>
