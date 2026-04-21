@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('page-title', 'Quản lý Đơn hàng')
+@section('page-title', 'Danh sách Đơn hàng')
 @section('page-icon', 'images/icon/invoice_icon.webp')
 
 @section('content')

@@ -118,7 +118,7 @@
                         @endif
                     </div>
 
-                    <a href="{{ route('admin.orders.customer', $customer->id) }}" class="btn btn-navy-light w-100 rounded-pill py-2 fw-bold text-white shadow-sm" style="font-size: .85rem;">
+                    <a href="{{ route('admin.orders.customer', $customer->id) }}" class="btn btn-navy w-100 rounded-pill fw-bold text-white shadow-sm" style="font-size: .85rem; background-color: #0f172a; padding-top: 10px; padding-bottom: 10px;">
                         <i class="fas fa-eye me-1"></i> Xem danh sách đơn hàng
                     </a>
                 </div>

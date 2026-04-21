@@ -35,6 +35,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/profile', [MobileApiController::class, 'getProfile']);
         Route::put('/profile', [MobileApiController::class, 'updateProfile']);
         Route::get('/orders', [MobileApiController::class, 'getOrders']);
+        Route::get('/orders/{id}', [MobileApiController::class, 'getOrderDetail']);
         Route::post('/orders/{id}/cancel', [MobileApiController::class, 'cancelOrder']);
         Route::post('/checkout', [MobileApiController::class, 'checkout']);
         Route::post('/coupon/verify', [MobileApiController::class, 'verifyCoupon']);

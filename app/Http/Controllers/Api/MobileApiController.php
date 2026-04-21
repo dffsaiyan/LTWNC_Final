@@ -465,6 +465,18 @@ class MobileApiController extends Controller
         ]);
     }
 
+    public function getOrderDetail(Request $request, $id)
+    {
+        $order = Order::where('user_id', $request->user()->id)
+            ->with(['items.product', 'user'])
+            ->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => $order
+        ]);
+    }
+
     public function verifyCoupon(Request $request)
     {
         $coupon = Coupon::where('code', $request->code)->first();
