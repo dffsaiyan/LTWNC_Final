@@ -444,7 +444,7 @@
                                 <h6 class="fw-bold text-dark text-truncate mb-2" title="{{ $product->name }}" style="font-size: 15px;">{{ $product->name }}</h6>
                                 
                                 <div class="product-price-elite mb-3">
-                                    @if($product->sale_price && $product->sale_price < $product->price)
+                                    @if($product->is_flash_sale && (float)$product->sale_price > 0 && $product->sale_price < $product->price)
                                         <span class="text-danger fw-black">{{ number_format($product->sale_price, 0, ',', '.') }} VNĐ</span>
                                         <span class="text-muted text-decoration-line-through x-small ms-1">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
                                     @else

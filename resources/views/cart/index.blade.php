@@ -472,8 +472,8 @@
         <p class="text-muted mb-4 mb-md-5 mx-auto px-4" style="max-width: 450px; font-size: clamp(13px, 3.5vw, 16px); line-height: 1.5;">
             Có vẻ như bạn chưa chọn được "vũ khí" nào cho trạm chiến đấu của mình. Hãy quay lại cửa hàng để khám phá ngay.
         </p>
-        <a href="{{ url('/') }}" class="btn btn-dark px-4 px-md-5 py-2 py-md-3 rounded-pill fw-bold shadow-lg text-uppercase transition-all hover-scale" style="letter-spacing: 1px; font-size: 0.8rem;">
-            KHÁM PHÁ CỬA HÀNG <i class="fas fa-arrow-right ms-2 text-warning"></i>
+        <a href="{{ url('/') }}" class="btn btn-orange px-4 px-md-5 py-2 py-md-3 rounded-pill fw-bold shadow-lg text-uppercase transition-all hover-scale" style="letter-spacing: 1px; font-size: 0.8rem;">
+            KHÁM PHÁ CỬA HÀNG <i class="fas fa-arrow-right ms-2"></i>
         </a>
     </div>
     @endif

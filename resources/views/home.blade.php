@@ -388,8 +388,12 @@
                         <h6 class="fw-bold text-dark text-truncate mb-2" title="{{ $product->name }}">{{ $product->name }}</h6>
                         
                         <div class="flash-price-row mb-3">
-                            <span class="product-price-elite text-danger">{{ number_format($product->sale_price, 0, ',', '.') }} VNĐ</span>
-                            <span class="flash-price-strike">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                            @if((float)$product->sale_price > 0 && $product->sale_price < $product->price)
+                                <span class="product-price-elite text-danger">{{ number_format($product->sale_price, 0, ',', '.') }} VNĐ</span>
+                                <span class="flash-price-strike">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                            @else
+                                <span class="product-price-elite text-dark">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                            @endif
                         </div>
 
                         <!-- Flash Stock Progress -->
@@ -463,7 +467,14 @@
                         <div class="card-body p-3 d-flex flex-column">
                             <p class="text-muted small mb-1 text-uppercase fw-bold opacity-75">Mechanical Gear</p>
                             <h6 class="fw-bold text-dark text-truncate mb-2" title="{{ $product->name }}">{{ $product->name }}</h6>
-                            <div class="product-price-elite mb-3">{{ number_format($product->price ?? $product->sale_price, 0, ',', '.') }} VNĐ</div>
+                            <div class="product-price-elite mb-3">
+                                @if($product->is_flash_sale && (float)$product->sale_price > 0 && $product->sale_price < $product->price)
+                                    <span class="text-danger fw-black">{{ number_format($product->sale_price, 0, ',', '.') }} VNĐ</span>
+                                    <span class="text-muted text-decoration-line-through x-small ms-1">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                @else
+                                    <span class="text-dark fw-black">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                @endif
+                            </div>
                             <div class="d-flex flex-column gap-2 mt-auto">
                                 <div class="d-flex gap-2">
                                     <a href="{{ route('products.show', $product->slug) }}" class="btn-elite-secondary">
@@ -515,7 +526,14 @@
                         <div class="card-body p-3 d-flex flex-column">
                             <p class="text-muted small mb-1 text-uppercase fw-bold opacity-75">Gaming Mouse</p>
                             <h6 class="fw-bold text-dark text-truncate mb-2" title="{{ $product->name }}">{{ $product->name }}</h6>
-                            <div class="product-price-elite mb-3">{{ number_format($product->price ?? $product->sale_price, 0, ',', '.') }} VNĐ</div>
+                            <div class="product-price-elite mb-3">
+                                @if($product->is_flash_sale && (float)$product->sale_price > 0 && $product->sale_price < $product->price)
+                                    <span class="text-danger fw-black">{{ number_format($product->sale_price, 0, ',', '.') }} VNĐ</span>
+                                    <span class="text-muted text-decoration-line-through x-small ms-1">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                @else
+                                    <span class="text-dark fw-black">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                @endif
+                            </div>
                             <div class="d-flex flex-column gap-2 mt-auto">
                                 <div class="d-flex gap-2">
                                     <a href="{{ route('products.show', $product->slug) }}" class="btn-elite-secondary">
@@ -567,7 +585,14 @@
                         <div class="card-body p-3 d-flex flex-column">
                             <p class="text-muted small mb-1 text-uppercase fw-bold opacity-75">Professional Monitor</p>
                             <h6 class="fw-bold text-dark text-truncate mb-2" title="{{ $product->name }}">{{ $product->name }}</h6>
-                            <div class="product-price-elite mb-3">{{ number_format($product->price ?? $product->sale_price, 0, ',', '.') }} VNĐ</div>
+                            <div class="product-price-elite mb-3">
+                                @if($product->is_flash_sale && (float)$product->sale_price > 0 && $product->sale_price < $product->price)
+                                    <span class="text-danger fw-black">{{ number_format($product->sale_price, 0, ',', '.') }} VNĐ</span>
+                                    <span class="text-muted text-decoration-line-through x-small ms-1">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                @else
+                                    <span class="text-dark fw-black">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                @endif
+                            </div>
                             <div class="d-flex flex-column gap-2 mt-auto">
                                 <div class="d-flex gap-2">
                                     <a href="{{ route('products.show', $product->slug) }}" class="btn-elite-secondary">
@@ -619,7 +644,14 @@
                         <div class="card-body p-3 d-flex flex-column">
                             <p class="text-muted small mb-1 text-uppercase fw-bold opacity-75">Gaming Laptop</p>
                             <h6 class="fw-bold text-dark text-truncate mb-2" title="{{ $product->name }}">{{ $product->name }}</h6>
-                            <div class="product-price-elite mb-3">{{ number_format($product->price ?? $product->sale_price, 0, ',', '.') }} VNĐ</div>
+                            <div class="product-price-elite mb-3">
+                                @if($product->is_flash_sale && (float)$product->sale_price > 0 && $product->sale_price < $product->price)
+                                    <span class="text-danger fw-black">{{ number_format($product->sale_price, 0, ',', '.') }} VNĐ</span>
+                                    <span class="text-muted text-decoration-line-through x-small ms-1">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                @else
+                                    <span class="text-dark fw-black">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                @endif
+                            </div>
                             <div class="d-flex flex-column gap-2 mt-auto">
                                 <div class="d-flex gap-2">
                                     <a href="{{ route('products.show', $product->slug) }}" class="btn-elite-secondary">
@@ -671,7 +703,14 @@
                         <div class="card-body p-3 d-flex flex-column">
                             <p class="text-muted small mb-1 text-uppercase fw-bold opacity-75">Audio Gear</p>
                             <h6 class="fw-bold text-dark text-truncate mb-2" title="{{ $product->name }}">{{ $product->name }}</h6>
-                            <div class="product-price-elite mb-3">{{ number_format($product->price ?? $product->sale_price, 0, ',', '.') }} VNĐ</div>
+                            <div class="product-price-elite mb-3">
+                                @if($product->is_flash_sale && (float)$product->sale_price > 0 && $product->sale_price < $product->price)
+                                    <span class="text-danger fw-black">{{ number_format($product->sale_price, 0, ',', '.') }} VNĐ</span>
+                                    <span class="text-muted text-decoration-line-through x-small ms-1">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                @else
+                                    <span class="text-dark fw-black">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                @endif
+                            </div>
                             <div class="d-flex flex-column gap-2 mt-auto">
                                 <div class="d-flex gap-2">
                                     <a href="{{ route('products.show', $product->slug) }}" class="btn-elite-secondary">
@@ -723,7 +762,14 @@
                         <div class="card-body p-3 d-flex flex-column">
                             <p class="text-muted small mb-1 text-uppercase fw-bold opacity-75">Gaming Pad</p>
                             <h6 class="fw-bold text-dark text-truncate mb-2" title="{{ $product->name }}">{{ $product->name }}</h6>
-                            <div class="product-price-elite mb-3">{{ number_format($product->price ?? $product->sale_price, 0, ',', '.') }} VNĐ</div>
+                            <div class="product-price-elite mb-3">
+                                @if($product->is_flash_sale && (float)$product->sale_price > 0 && $product->sale_price < $product->price)
+                                    <span class="text-danger fw-black">{{ number_format($product->sale_price, 0, ',', '.') }} VNĐ</span>
+                                    <span class="text-muted text-decoration-line-through x-small ms-1">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                @else
+                                    <span class="text-dark fw-black">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                @endif
+                            </div>
                             <div class="d-flex flex-column gap-2 mt-auto">
                                 <div class="d-flex gap-2">
                                     <a href="{{ route('products.show', $product->slug) }}" class="btn-elite-secondary">
@@ -775,7 +821,14 @@
                         <div class="card-body p-3 d-flex flex-column">
                             <p class="text-muted small mb-1 text-uppercase fw-bold opacity-75">Custom Parts</p>
                             <h6 class="fw-bold text-dark text-truncate mb-2" title="{{ $product->name }}">{{ $product->name }}</h6>
-                            <div class="product-price-elite mb-3">{{ number_format($product->price ?? $product->sale_price, 0, ',', '.') }} VNĐ</div>
+                            <div class="product-price-elite mb-3">
+                                @if($product->is_flash_sale && (float)$product->sale_price > 0 && $product->sale_price < $product->price)
+                                    <span class="text-danger fw-black">{{ number_format($product->sale_price, 0, ',', '.') }} VNĐ</span>
+                                    <span class="text-muted text-decoration-line-through x-small ms-1">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                @else
+                                    <span class="text-dark fw-black">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                @endif
+                            </div>
                             <div class="d-flex flex-column gap-2 mt-auto">
                                 <div class="d-flex gap-2">
                                     <a href="{{ route('products.show', $product->slug) }}" class="btn-elite-secondary">
@@ -827,7 +880,14 @@
                         <div class="card-body p-3 d-flex flex-column">
                             <p class="text-muted small mb-1 text-uppercase fw-bold opacity-75">Ergo Chair</p>
                             <h6 class="fw-bold text-dark text-truncate mb-2" title="{{ $product->name }}">{{ $product->name }}</h6>
-                            <div class="product-price-elite mb-3">{{ number_format($product->price ?? $product->sale_price, 0, ',', '.') }} VNĐ</div>
+                            <div class="product-price-elite mb-3">
+                                @if($product->is_flash_sale && (float)$product->sale_price > 0 && $product->sale_price < $product->price)
+                                    <span class="text-danger fw-black">{{ number_format($product->sale_price, 0, ',', '.') }} VNĐ</span>
+                                    <span class="text-muted text-decoration-line-through x-small ms-1">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                @else
+                                    <span class="text-dark fw-black">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                @endif
+                            </div>
                             <div class="d-flex flex-column gap-2 mt-auto">
                                 <div class="d-flex gap-2">
                                     <a href="{{ route('products.show', $product->slug) }}" class="btn-elite-secondary">

@@ -298,12 +298,26 @@ class AdminController extends Controller implements HasMiddleware
         return view('admin.products.create', compact('categories', 'brands'));
     }
 
+    private function sanitizePrice($value) {
+        if (!$value) return 0;
+        // Xóa dấu phẩy, khoảng cách, và dấu chấm phân cách hàng nghìn (nếu có)
+        return (float) str_replace([',', '.', ' ', 'VNĐ', 'đ'], '', $value);
+    }
+
     public function storeProduct(Request $request) {
+        // Sanitize prices before validation
+        $request->merge([
+            'price' => $this->sanitizePrice($request->price),
+            'sale_price' => $this->sanitizePrice($request->sale_price),
+        ]);
+
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'brand_id' => 'required|exists:brands,id',
             'price' => 'required|numeric|min:0',
+            'sale_price' => 'nullable|numeric|min:0',
+            'is_flash_sale' => 'nullable|boolean',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
             'image' => 'nullable|string',
@@ -327,11 +341,17 @@ class AdminController extends Controller implements HasMiddleware
             'frame' => 'nullable|string'
         ]);
 
-        if ($request->hasFile('image_file')) {
-            $path = $request->file('image_file')->store('products', 'public');
-            $data['image'] = 'storage/' . $path;
+        $data['is_flash_sale'] = $request->has('is_flash_sale');
+        if (!$data['is_flash_sale']) {
+            $data['sale_price'] = 0;
         }
 
+        if ($request->hasFile('image_file')) {
+            $file = $request->file('image_file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('storage/products'), $filename);
+            $data['image'] = 'storage/products/' . $filename;
+        }
         // Xử lý thông số kỹ thuật (Dòng 1: Giá trị 1)
         if ($request->specifications) {
             $specs = [];
@@ -382,7 +402,30 @@ class AdminController extends Controller implements HasMiddleware
     public function updateProduct(Request $request, $id) {
         $product = Product::findOrFail($id);
         
+        // Sanitize prices before validation
+        $request->merge([
+            'price' => $this->sanitizePrice($request->price),
+            'sale_price' => $this->sanitizePrice($request->sale_price),
+        ]);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'brand_id' => 'required|exists:brands,id',
+            'price' => 'required|numeric|min:0',
+            'sale_price' => 'nullable|numeric|min:0',
+            'is_flash_sale' => 'nullable|boolean',
+            'stock' => 'required|integer|min:0',
+        ]);
+
         $data = $request->all();
+        $data['is_flash_sale'] = $request->has('is_flash_sale');
+        
+        // Nếu tắt flash sale từ form này, ta có thể giữ sale_price hoặc reset tùy business
+        // Nhưng ở đây nếu user nhập sale_price = 0 và tắt flash sale thì chắc chắn là 0
+        if (!$data['is_flash_sale']) {
+            $data['sale_price'] = 0;
+        }
 
         // CHỨC NĂNG TẢI ẢNH CHÍNH (CHUẨN NHẤT)
         if ($request->hasFile('image_file')) {

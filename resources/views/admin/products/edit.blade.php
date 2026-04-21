@@ -164,13 +164,36 @@
                         </div>
 
                         <div class="row g-3 mb-4">
-                            <div class="col-6">
-                                <label class="form-label fw-bold">Giá bán (VNĐ) <span class="text-danger">*</span></label>
-                                <input type="number" name="price" class="form-control" value="{{ old('price', $product->price) }}" required>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-dark">Giá gốc (VNĐ) <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="fas fa-tag text-muted"></i></span>
+                                    <input type="number" name="price" class="form-control" value="{{ old('price', (int)$product->price) }}" required>
+                                </div>
                             </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-orange-gradient">Giá khuyến mãi (VNĐ)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="fas fa-percentage text-orange"></i></span>
+                                    <input type="number" name="sale_price" class="form-control" value="{{ old('sale_price', (int)$product->sale_price) }}" placeholder="Để 0 nếu không giảm giá">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
                             <div class="col-6">
                                 <label class="form-label fw-bold">Tồn kho <span class="text-danger">*</span></label>
-                                <input type="number" name="stock" class="form-control" value="{{ old('stock', $product->stock) }}" required>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="fas fa-boxes text-muted"></i></span>
+                                    <input type="number" name="stock" class="form-control" value="{{ old('stock', $product->stock) }}" required>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold">Trạng thái Flash Sale</label>
+                                <div class="form-check form-switch mt-2">
+                                    <input class="form-check-input" type="checkbox" name="is_flash_sale" id="isFlashSale" value="1" {{ old('is_flash_sale', $product->is_flash_sale) ? 'checked' : '' }}>
+                                    <label class="form-check-label small fw-bold text-muted" for="isFlashSale">Kích hoạt Flash Sale</label>
+                                </div>
                             </div>
                         </div>
 

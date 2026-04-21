@@ -21,7 +21,7 @@
         <!-- ===== CỘT ẢNH SẢN PHẨM ===== -->
         <div class="col-md-6">
             <div class="pdp-img-card bg-white rounded-4 shadow-sm p-4 text-center border-0 position-relative overflow-hidden">
-                @if($product->is_flash_sale && $product->sale_price > 0 && $product->sale_price < $product->price)
+                @if($product->is_flash_sale && (float)$product->sale_price > 0 && $product->sale_price < $product->price)
                 <div class="position-absolute top-0 start-0 m-3 z-3">
                     <span class="pdp-sale-badge">-{{ round((($product->price - $product->sale_price) / $product->price) * 100) }}%</span>
                 </div>
@@ -64,7 +64,7 @@
                 
                 <!-- Giá -->
                 <div class="pdp-price-box mb-4 p-3 rounded-4">
-                    @if($product->is_flash_sale && $product->sale_price)
+                    @if($product->is_flash_sale && (float)$product->sale_price > 0 && $product->sale_price < $product->price)
                         <div class="d-flex align-items-end gap-3">
                             <span class="pdp-price-sale">{{ number_format($product->sale_price, 0, ',', '.') }} VNĐ</span>
                             <span class="pdp-price-old">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
@@ -388,9 +388,11 @@
                         <h6 class="fw-bold text-dark mb-2 text-truncate-2 small" style="min-height: 40px; line-height: 1.5;">{{ $rel->name }}</h6>
                         <div class="mt-auto">
                             <div class="d-flex align-items-end gap-2 mb-3">
-                                <span class="fw-bold text-orange-gradient" style="font-size: 16px;">{{ number_format($rel->sale_price > 0 ? $rel->sale_price : $rel->price, 0, ',', '.') }} VNĐ</span>
-                                @if($rel->price > ($rel->sale_price > 0 ? $rel->sale_price : $rel->price))
+                                @if($rel->is_flash_sale && (float)$rel->sale_price > 0 && $rel->sale_price < $rel->price)
+                                    <span class="fw-bold text-orange-gradient" style="font-size: 16px;">{{ number_format($rel->sale_price, 0, ',', '.') }} VNĐ</span>
                                     <span class="text-muted text-decoration-line-through" style="font-size: 12px; opacity: 0.6;">{{ number_format($rel->price, 0, ',', '.') }} VNĐ</span>
+                                @else
+                                    <span class="fw-bold text-orange-gradient" style="font-size: 16px;">{{ number_format($rel->price, 0, ',', '.') }} VNĐ</span>
                                 @endif
                             </div>
                             <div class="d-flex gap-2">
