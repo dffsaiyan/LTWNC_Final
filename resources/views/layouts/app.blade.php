@@ -1030,10 +1030,12 @@
         }
         .ai-msg {
             max-width: 80%;
-            padding: 10px 16px;
+            padding: 12px 16px;
             border-radius: 18px;
             font-size: 13.5px;
-            line-height: 1.5;
+            line-height: 1.6;
+            white-space: pre-wrap; /* Quan trọng: Giúp hiển thị dấu xuống dòng từ AI */
+            word-wrap: break-word;
         }
         .ai-msg-bot {
             align-self: flex-start;

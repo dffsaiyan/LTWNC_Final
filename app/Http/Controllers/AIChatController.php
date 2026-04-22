@@ -47,7 +47,7 @@ class AIChatController extends Controller
                 $productContext = "\n\nTHÔNG TIN SẢN PHẨM THỰC TẾ TRONG KHO (ƯU TIÊN DÙNG DỮ LIỆU NÀY):\n";
                 foreach ($relatedProducts as $p) {
                     $origPrice = number_format($p->price, 0, ',', '.') . 'đ';
-                    $salePrice = $p->sale_price ? number_format($p->sale_price, 0, ',', '.') . 'đ' : null;
+                    $salePrice = ($p->sale_price > 0) ? number_format($p->sale_price, 0, ',', '.') . 'đ' : null;
                     $displayPrice = $salePrice ? "{$salePrice} (Giá gốc: {$origPrice})" : $origPrice;
                     $productContext .= "- {$p->name}: {$displayPrice}. Link: /product/{$p->slug}\n";
                 }
