@@ -164,6 +164,9 @@
                     <a href="{{ route('account.orders') }}" class="account-menu-item">
                         <i class="fas fa-shopping-bag"></i> Đơn hàng đã mua
                     </a>
+                    <a href="{{ route('posts.index') }}" class="account-menu-item">
+                        <i class="fas fa-newspaper"></i> Đọc tin tức
+                    </a>
                     @if(Auth::user()->can_write_posts || Auth::user()->email === 'admin@ddh.com')
                     <a href="{{ route('admin.posts') }}" class="account-menu-item">
                         <i class="fas fa-edit"></i> Viết bài mới

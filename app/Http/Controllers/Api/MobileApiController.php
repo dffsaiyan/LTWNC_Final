@@ -468,19 +468,21 @@ class MobileApiController extends Controller
 
     private function generateMomoUrl($order)
     {
-        // Simple test implementation as per CheckoutController
         $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
         $partnerCode = env('MOMO_PARTNER_CODE', 'MOMO');
         $accessKey = env('MOMO_ACCESS_KEY', 'F8BBA842ECF85');
         $secretKey = env('MOMO_SECRET_KEY', 'K951B6PE1waDMi640xX08PD3vg6EkVlz');
 
+        $orderInfo = "Thanh toan don hang DDH Electronics";
         $amount = (string)round($order->total_price);
         $orderId = (string)$order->id . "_" . time();
-        $requestId = (string)time();
         $returnUrl = route('momo.return');
         $notifyUrl = route('momo.return');
-        
-        $rawHash = "accessKey=$accessKey&amount=$amount&extraData=&ipnUrl=$notifyUrl&orderId=$orderId&orderInfo=Payment&partnerCode=$partnerCode&redirectUrl=$returnUrl&requestId=$requestId&requestType=captureWallet";
+        $requestId = (string)time() . rand(100, 999);
+        $requestType = "captureWallet";
+        $extraData = "";
+
+        $rawHash = "accessKey=" . $accessKey . "&amount=" . $amount . "&extraData=" . $extraData . "&ipnUrl=" . $notifyUrl . "&orderId=" . $orderId . "&orderInfo=" . $orderInfo . "&partnerCode=" . $partnerCode . "&redirectUrl=" . $returnUrl . "&requestId=" . $requestId . "&requestType=" . $requestType;
         $signature = hash_hmac("sha256", $rawHash, $secretKey);
 
         $data = [
@@ -490,21 +492,29 @@ class MobileApiController extends Controller
             'requestId' => $requestId,
             'amount' => (int)$amount,
             'orderId' => $orderId,
-            'orderInfo' => "Thanh toan don hang #" . $order->id,
+            'orderInfo' => $orderInfo,
             'redirectUrl' => $returnUrl,
             'ipnUrl' => $notifyUrl,
             'lang' => 'vi',
-            'extraData' => '',
-            'requestType' => "captureWallet",
+            'extraData' => $extraData,
+            'requestType' => $requestType,
             'signature' => $signature
         ];
 
+        $payload = json_encode($data);
         $ch = curl_init($endpoint);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($payload)
+        ]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         $result = curl_exec($ch);
+        curl_close($ch);
         $jsonResult = json_decode($result, true);
 
         return $jsonResult['payUrl'] ?? null;
@@ -645,6 +655,15 @@ class MobileApiController extends Controller
         return response()->json(['success' => true, 'added' => true]);
     }
 
+    public function clearWishlist(Request $request)
+    {
+        Wishlist::where('user_id', $request->user()->id)->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Đã xóa toàn bộ danh sách yêu thích.'
+        ]);
+    }
+
     // 🛒 CART SYNC
     public function getCart(Request $request)
     {
@@ -692,7 +711,7 @@ class MobileApiController extends Controller
 
     public function clearCart(Request $request)
     {
-        \App\Models\Cart::where('user_id', Auth::id())->delete();
+        \App\Models\Cart::where('user_id', $request->user()->id)->delete();
         return response()->json(['success' => true, 'data' => []]);
     }
 }

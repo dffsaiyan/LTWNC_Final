@@ -42,6 +42,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/reviews', [MobileApiController::class, 'submitReview']);
         Route::get('/wishlist', [MobileApiController::class, 'getWishlist']);
         Route::post('/wishlist/toggle/{productId}', [MobileApiController::class, 'toggleWishlist']);
+        Route::post('/wishlist/clear', [MobileApiController::class, 'clearWishlist']);
 
         // Cart Sync
         Route::get('/cart', [MobileApiController::class, 'getCart']);
