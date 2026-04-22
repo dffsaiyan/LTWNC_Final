@@ -530,14 +530,18 @@
     }
 
     function resetFilters() {
-        loadFilterPage('{{ request()->url() }}');
+        // Reset về URL gốc của category (bỏ mọi tham số query)
+        const baseUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
+        loadFilterPage(baseUrl);
     }
 
     function loadFilterPage(url) {
         const overlay = document.getElementById('elite-loading-overlay');
-        overlay.style.display = 'flex';
-        overlay.style.opacity = '0';
-        setTimeout(() => overlay.style.opacity = '1', 10);
+        if (overlay) {
+            overlay.style.display = 'flex';
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.style.opacity = '1', 10);
+        }
 
         fetch(url, {
             headers: {
@@ -562,12 +566,14 @@
             document.getElementById('product-container-elite').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
             // Hide overlay
-            overlay.style.opacity = '0';
-            setTimeout(() => overlay.style.display = 'none', 300);
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.style.display = 'none', 300);
+            }
         })
         .catch(error => {
             console.error('Error loading page:', error);
-            overlay.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
         });
     }
 </script>
