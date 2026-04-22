@@ -19,7 +19,16 @@ class HomeController extends Controller
     public function index()
     {
         $allProducts = Product::with('category')->latest()->get();
-        $flashSaleProducts = Product::where('is_flash_sale', true)->where('sale_price', '>', 0)->where('stock', '>', 0)->take(8)->get();
+        $flashSaleProducts = Product::where('is_flash_sale', true)
+            ->where('sale_price', '>', 0)
+            ->where('stock', '>', 0)
+            ->withSum(['orderItems as sold_count' => function($query) {
+                $query->whereHas('order', function($q) {
+                    $q->where('status', 'completed');
+                });
+            }], 'quantity')
+            ->take(8)
+            ->get();
         $categories = Category::withCount('products')->get();
         $sidebarCategories = Category::whereIn('slug', ['ban-phim-co', 'chuot-gaming', 'man-hinh-do-hoa', 'laptop-gaming', 'am-thanh-loa', 'lot-chuot-gear', 'keycaps-switch', 'ghe-cong-thai-hoc'])->get();
         

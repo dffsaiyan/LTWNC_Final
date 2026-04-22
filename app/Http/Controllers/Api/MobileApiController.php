@@ -32,6 +32,11 @@ class MobileApiController extends Controller
                 ->where('sale_price', '>', 0)
                 ->where('stock', '>', 0)
                 ->with('category')
+                ->withSum(['orderItems as sold_count' => function($q) {
+                    $q->whereHas('order', function($o) {
+                        $o->where('status', 'completed');
+                    });
+                }], 'quantity')
                 ->limit(8)
                 ->get();
             
@@ -42,8 +47,15 @@ class MobileApiController extends Controller
             $featuredProducts = Product::where('is_active', 1)
                 ->whereNotIn('id', $flashIds)
                 ->with('category')
+                ->withSum(['orderItems as sold_count' => function($q) {
+                    $q->whereHas('order', function($o) {
+                        $o->where('status', 'completed');
+                    });
+                }], 'quantity')
                 ->limit(8)
                 ->get();
+
+            $isFlashActive = $flashSaleEnd && strtotime($flashSaleEnd) > time();
 
             return response()->json([
                 'success' => true,
@@ -53,7 +65,8 @@ class MobileApiController extends Controller
                     'popular' => $featuredProducts,
                     'new_arrivals' => $newArrivals,
                     'flash_sale' => $flashSales,
-                    'flash_sale_end' => $flashSaleEnd
+                    'flash_sale_end' => $flashSaleEnd,
+                    'is_flash_active' => $isFlashActive
                 ]
             ]);
         } catch (\Exception $e) {
@@ -70,17 +83,32 @@ class MobileApiController extends Controller
     {
         $query = Product::with('category');
 
-        if ($request->category_id) {
+        if ($request->category_id && $request->category_id !== 'flash') {
             $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->flash_sale == 1 || $request->category_id === 'flash') {
+            $query->where('is_flash_sale', 1)
+                  ->where('sale_price', '>', 0)
+                  ->where('stock', '>', 0);
         }
 
         if ($request->search) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
+        // Add highly accurate real sold count (Sum of quantities from completed orders)
+        $query->withSum(['orderItems as sold_count' => function($q) {
+            $q->whereHas('order', function($o) {
+                $o->where('status', 'completed');
+            });
+        }], 'quantity');
+
+        $perPage = $request->per_page ?? 6;
+
         return response()->json([
             'success' => true,
-            'data' => $query->paginate(10)
+            'data' => $query->paginate($perPage)
         ]);
     }
 
@@ -108,9 +136,13 @@ class MobileApiController extends Controller
     public function getCategories()
     {
         $categories = Category::all();
+        $flashSaleEnd = \App\Models\Setting::where('key', 'flash_sale_end')->first()->value ?? null;
+        $isFlashActive = $flashSaleEnd && strtotime($flashSaleEnd) > time();
+        
         return response()->json([
             'success' => true,
-            'data' => $categories
+            'data' => $categories,
+            'is_flash_active' => $isFlashActive
         ]);
     }
 

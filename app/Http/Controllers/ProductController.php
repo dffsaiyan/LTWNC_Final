@@ -23,7 +23,7 @@ class ProductController extends Controller
                                     ->with('category')
                                     ->withSum(['orderItems as sold_count' => function($query) {
                                         $query->whereHas('order', function($q) {
-                                            $q->where('status', '!=', 'cancelled');
+                                            $q->where('status', 'completed');
                                         });
                                     }], 'quantity')
                                     ->get();
