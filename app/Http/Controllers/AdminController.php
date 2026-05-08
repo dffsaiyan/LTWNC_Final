@@ -708,37 +708,62 @@ class AdminController extends Controller implements HasMiddleware
     public function exportReport()
     {
         $orders = Order::with('user')->latest()->get();
+        $total_revenue = $orders->where('status', 'completed')->sum('total_price');
         
-        $filename = "bao_cao_don_hang_" . date('Ymd_His') . ".csv";
-        $headers = [
-            "Content-type"        => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma"              => "no-cache",
-            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
-            "Expires"             => "0"
-        ];
+        // Tạo tên file theo thời gian hiện tại tiếng Việt
+        $timeStr = date('d_thang_m_nam_Y_luc_H\hi');
+        $filename = "Bao_cao_DDH_ngay_$timeStr.xls";
 
-        $columns = ['ID', 'Khách hàng', 'Email', 'Tổng tiền', 'Trạng thái', 'Ngày đặt'];
+        // Giao diện HTML để Excel hiển thị đẹp hơn
+        $html = '
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <style>
+            .header { background-color: #0d2137; color: #ffffff; font-weight: bold; text-align: center; }
+            .title { font-size: 18pt; font-weight: bold; color: #F7941E; text-align: center; }
+            .summary { font-weight: bold; background-color: #f1f5f9; }
+            .table-cell { border: 0.5pt solid #cbd5e1; padding: 5px; }
+            .status-completed { color: #059669; }
+            .status-pending { color: #d97706; }
+            .status-cancelled { color: #dc2626; }
+        </style>
+        <table>
+            <tr><td colspan="6" class="title">BÁO CÁO DOANH THU DDH ELECTRONICS</td></tr>
+            <tr><td colspan="6" style="text-align: center; color: #64748b;">Thời gian xuất báo cáo: ' . date('d/m/Y H:i:s') . '</td></tr>
+            <tr><td colspan="6"></td></tr>
+            <tr class="header">
+                <th class="table-cell" style="width: 100px;">Mã Đơn</th>
+                <th class="table-cell" style="width: 200px;">Khách Hàng</th>
+                <th class="table-cell" style="width: 250px;">Email</th>
+                <th class="table-cell" style="width: 150px;">Tổng Tiền</th>
+                <th class="table-cell" style="width: 120px;">Trạng Thái</th>
+                <th class="table-cell" style="width: 150px;">Ngày Đặt</th>
+            </tr>';
 
-        $callback = function() use($orders, $columns) {
-            $file = fopen('php://output', 'w');
-            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF)); // Thêm BOM để hiển thị tiếng Việt trên Excel
-            fputcsv($file, $columns);
+        foreach ($orders as $order) {
+            $statusClass = 'status-' . $order->status;
+            $html .= '
+            <tr>
+                <td class="table-cell" style="text-align: center;">#DDH-' . $order->id . '</td>
+                <td class="table-cell">' . ($order->user->name ?? 'N/A') . '</td>
+                <td class="table-cell">' . ($order->user->email ?? 'N/A') . '</td>
+                <td class="table-cell" style="text-align: right;">' . number_format($order->total_price, 0, ',', '.') . ' VNĐ</td>
+                <td class="table-cell ' . $statusClass . '" style="text-align: center;">' . strtoupper($order->status) . '</td>
+                <td class="table-cell" style="text-align: center;">' . $order->created_at->format('d/m/Y H:i') . '</td>
+            </tr>';
+        }
 
-            foreach ($orders as $order) {
-                fputcsv($file, [
-                    '#DDH-' . $order->id,
-                    $order->user->name ?? 'N/A',
-                    $order->user->email ?? 'N/A',
-                    number_format($order->total_price, 0, ',', '.') . ' VNĐ',
-                    $order->status,
-                    $order->created_at->format('d/m/Y H:i')
-                ]);
-            }
-            fclose($file);
-        };
+        $html .= '
+            <tr><td colspan="6"></td></tr>
+            <tr class="summary">
+                <td colspan="3" class="table-cell" style="text-align: right; background-color: #0d2137; color: white;">TỔNG DOANH THU THỰC TẾ (Đã hoàn thành):</td>
+                <td class="table-cell" style="text-align: right; color: #059669; font-size: 12pt;">' . number_format($total_revenue, 0, ',', '.') . ' VNĐ</td>
+                <td colspan="2" class="table-cell"></td>
+            </tr>
+        </table>';
 
-        return response()->stream($callback, 200, $headers);
+        return response($html)
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', "attachment; filename=$filename");
     }
 
     // --- Brands Management ---
