@@ -705,6 +705,42 @@ class AdminController extends Controller implements HasMiddleware
         return view('admin.reports', compact('top_products', 'monthly_revenue'));
     }
 
+    public function exportReport()
+    {
+        $orders = Order::with('user')->latest()->get();
+        
+        $filename = "bao_cao_don_hang_" . date('Ymd_His') . ".csv";
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['ID', 'Khách hàng', 'Email', 'Tổng tiền', 'Trạng thái', 'Ngày đặt'];
+
+        $callback = function() use($orders, $columns) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF)); // Thêm BOM để hiển thị tiếng Việt trên Excel
+            fputcsv($file, $columns);
+
+            foreach ($orders as $order) {
+                fputcsv($file, [
+                    '#DDH-' . $order->id,
+                    $order->user->name ?? 'N/A',
+                    $order->user->email ?? 'N/A',
+                    number_format($order->total_price, 0, ',', '.') . ' VNĐ',
+                    $order->status,
+                    $order->created_at->format('d/m/Y H:i')
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     // --- Brands Management ---
     public function brands() {
         $brands = Brand::withCount('products')->latest()->paginate(8);
