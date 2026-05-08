@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('page-icon', 'fas fa-bolt')
+@section('page-icon', 'images/icon/flash_icon.png')
 @section('page-title', 'Flash Sale')
 
 @section('content')

@@ -569,7 +569,9 @@
             z-index: 9991; display: none; opacity: 0;
             transition: opacity 0.3s ease;
         }
-        body.sidebar-open { overflow: hidden !important; }
+        @media (max-width: 991px) {
+            body.sidebar-open { overflow: hidden !important; }
+        }
         body.sidebar-open #sidebar-overlay { display: block; opacity: 1; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -658,9 +660,6 @@
                 <a href="{{ route('admin.reports') }}" class="sidebar-link {{ request()->is('admin/reports*') ? 'active' : '' }}" wire:navigate>
                     <img src="{{ asset('images/icon/chart_icon.png') }}" style="width: 18px; height: 18px; object-fit: contain; margin-right: 2px;"> Báo cáo
                 </a>
-                <a href="{{ route('admin.settings') }}" class="sidebar-link {{ request()->is('admin/settings*') ? 'active' : '' }}" wire:navigate>
-                    <img src="{{ asset('images/icon/setting_icon.png') }}" style="width: 18px; height: 18px; object-fit: contain; margin-right: 2px;"> Cài đặt
-                </a>
                 @endif
             </div>
 
@@ -701,7 +700,7 @@
                             <span id="liveDateTimeText"></span>
                         </div>
                         
-                        <a href="{{ route('admin.settings') }}" class="admin-avatar-wrap text-decoration-none">
+                        <a href="{{ route('admin.dashboard') }}" class="admin-avatar-wrap text-decoration-none">
                             <div class="admin-avatar-container">
                                 <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : (Auth::user()->social_avatar ?? asset('images/default-avatar.png')) }}" alt="Admin">
                                 <span class="status-dot"></span>
