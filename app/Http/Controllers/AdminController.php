@@ -739,15 +739,24 @@ class AdminController extends Controller implements HasMiddleware
                 <th class="table-cell" style="width: 150px;">Ngày Đặt</th>
             </tr>';
 
+        $statusMap = [
+            'pending'   => 'CHỜ XỬ LÝ',
+            'completed' => 'ĐÃ HOÀN THÀNH',
+            'cancelled' => 'ĐÃ HỦY',
+            'processing'=> 'ĐANG GIAO HÀNG'
+        ];
+
         foreach ($orders as $order) {
             $statusClass = 'status-' . $order->status;
+            $statusText = $statusMap[$order->status] ?? strtoupper($order->status);
+            
             $html .= '
             <tr>
                 <td class="table-cell" style="text-align: center;">#DDH-' . $order->id . '</td>
                 <td class="table-cell">' . ($order->user->name ?? 'N/A') . '</td>
                 <td class="table-cell">' . ($order->user->email ?? 'N/A') . '</td>
                 <td class="table-cell" style="text-align: right;">' . number_format($order->total_price, 0, ',', '.') . ' VNĐ</td>
-                <td class="table-cell ' . $statusClass . '" style="text-align: center;">' . strtoupper($order->status) . '</td>
+                <td class="table-cell ' . $statusClass . '" style="text-align: center;">' . $statusText . '</td>
                 <td class="table-cell" style="text-align: center;">' . $order->created_at->format('d/m/Y H:i') . '</td>
             </tr>';
         }
