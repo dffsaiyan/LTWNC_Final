@@ -93,10 +93,21 @@ class ProductController extends Controller
         if ($request->has('price')) {
             $query->where(function($q) use ($request) {
                 foreach($request->price as $range) {
-                    if ($range == 'under_1m') $q->orWhere('sale_price', '<', 1000000);
-                    if ($range == '1_3m') $q->orWhereBetween('sale_price', [1000000, 3000000]);
-                    if ($range == '3_5m') $q->orWhereBetween('sale_price', [3000000, 5000000]);
-                    if ($range == 'over_5m') $q->orWhere('sale_price', '>', 5000000);
+                    // Logic: Lấy sale_price nếu > 0, ngược lại lấy price gốc
+                    $effectivePrice = "COALESCE(NULLIF(sale_price, 0), price)";
+                    
+                    if ($range == 'under_1m') {
+                        $q->orWhereRaw("$effectivePrice < ?", [1000000]);
+                    }
+                    if ($range == '1_3m') {
+                        $q->orWhereRaw("$effectivePrice BETWEEN ? AND ?", [1000000, 3000000]);
+                    }
+                    if ($range == '3_5m') {
+                        $q->orWhereRaw("$effectivePrice BETWEEN ? AND ?", [3000000, 5000000]);
+                    }
+                    if ($range == 'over_5m') {
+                        $q->orWhereRaw("$effectivePrice > ?", [5000000]);
+                    }
                 }
             });
         }
@@ -128,9 +139,11 @@ class ProductController extends Controller
 
         // Sorting
         $sort = $request->get('sort', 'default');
+        $effectivePrice = "COALESCE(NULLIF(sale_price, 0), price)";
+        
         switch ($sort) {
-            case 'price_asc': $query->orderBy('sale_price', 'asc'); break;
-            case 'price_desc': $query->orderBy('sale_price', 'desc'); break;
+            case 'price_asc': $query->orderByRaw("$effectivePrice asc"); break;
+            case 'price_desc': $query->orderByRaw("$effectivePrice desc"); break;
             case 'newest': $query->orderBy('created_at', 'desc'); break;
             default: $query->orderBy('id', 'desc'); break;
         }

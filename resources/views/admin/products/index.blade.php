@@ -111,6 +111,47 @@
         }
         .search-icon-overlay { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 1.1rem; }
 
+        /* 📱 RESPONSIVE ADJUSTMENTS */
+        @media (max-width: 768px) {
+            .header-text-main { font-size: 1.3rem; }
+            .elite-action-btn { 
+                padding: 0.6rem 1.2rem; 
+                font-size: 0.85rem;
+            }
+            .elite-action-btn span { display: none; } /* Chỉ hiện icon trên mobile để tiết kiệm diện tích */
+            .elite-action-btn i { margin: 0 !important; }
+            
+            .category-nav-wrapper { 
+                padding: 6px 10px; 
+                gap: 8px;
+                order: 2;
+                width: 100%; /* Đảm bảo thanh này chiếm hết chiều ngang */
+                justify-content: space-between;
+            }
+            .nav-arrow-btn {
+                width: 38px; /* Tăng kích thước nút lên cho dễ bấm */
+                height: 38px;
+                font-size: 0.9rem;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.12); /* Làm bóng đổ đậm hơn để nổi bật */
+                background: #fff !important;
+                opacity: 1 !important; /* Luôn hiện rõ nút */
+            }
+            .nav-arrow-btn.disabled {
+                opacity: 0.4 !important; /* Khi không cuộn được nữa thì chỉ mờ nhẹ đi thôi */
+            }
+            .nav-tab-item {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+            
+            .search-wrapper-elite { 
+                width: 100%; 
+                order: 1;
+            }
+            .elite-search-input {
+                height: 45px;
+                font-size: 0.95rem;
+            }
         }
     </style>
 

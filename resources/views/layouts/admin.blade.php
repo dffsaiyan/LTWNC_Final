@@ -89,7 +89,10 @@
         
         /* Desktop specific: push content when open and HIDE overlay */
         @media (min-width: 992px) {
-            body.sidebar-open #main-content { padding-left: var(--sidebar-w); }
+            body.sidebar-open #main-content { 
+                margin-left: var(--sidebar-w); 
+                width: calc(100% - var(--sidebar-w));
+            }
             body.sidebar-open #sidebar-overlay { display: none !important; }
         }
 
@@ -174,8 +177,9 @@
         #main-content {
             flex: 1; display: flex; flex-direction: column;
             min-height: 100vh;
+            width: 100%;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            padding-left: 0;
+            position: relative;
         }
         @media (max-width: 991px) {
             #main-content { padding-left: 0; }

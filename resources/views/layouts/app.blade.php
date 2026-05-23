@@ -2723,11 +2723,12 @@
                                 if (data.success && data.data.data.length > 0) {
                                     let html = '';
                                     data.data.data.forEach(product => {
-                                        const price = new Intl.NumberFormat('vi-VN').format(product.sale_price || product.price) + 'đ';
+                                        const displayPrice = (parseFloat(product.sale_price) > 0) ? product.sale_price : product.price;
+                                        const price = new Intl.NumberFormat('vi-VN').format(displayPrice) + 'đ';
                                         const imgUrl = product.image.startsWith('http') ? product.image : `/storage/${product.image.replace('public/', '')}`;
                                         
                                         html += `
-                                            <a href="/products/${product.id}" class="search-result-item-elite">
+                                            <a href="/product/${product.slug}" class="search-result-item-elite">
                                                 <img src="${imgUrl}" class="search-result-img" onerror="this.src='https://via.placeholder.com/50'">
                                                 <div class="search-result-info">
                                                     <div class="search-result-name">${product.name}</div>

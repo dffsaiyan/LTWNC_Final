@@ -445,7 +445,7 @@
                                 <div class="p-4 rounded-4 bg-light border shadow-sm">
                                     <div class="d-flex justify-content-between mb-3">
                                         <span class="text-muted fw-bold small text-uppercase">Tạm tính:</span>
-                                        <span class="fw-bold text-dark">1.400.000 VNĐ</span>
+                                        <span class="fw-bold text-dark">{{ number_format($total, 0, ',', '.') }} VNĐ</span>
                                     </div>
                                     <div class="d-flex justify-content-between mb-3">
                                         <span class="text-muted fw-bold small text-uppercase">Phí ship:</span>
@@ -455,8 +455,8 @@
                                     <hr class="my-4 opacity-10">
                                     <div class="mb-3 text-center">
                                         <div class="fw-bold text-dark text-uppercase small mb-2">Tổng tiền thanh toán:</div>
-                                        <div class="h2 fw-bold text-warning mb-0" id="grandTotalText">1.400.000 VNĐ</div>
-                                        <input type="hidden" id="rawTotal" value="1400000">
+                                        <div class="h2 fw-bold text-warning mb-0" id="grandTotalText">{{ number_format($grandTotal, 0, ',', '.') }} VNĐ</div>
+                                        <input type="hidden" id="rawTotal" value="{{ $grandTotal }}">
                                     </div>
                                     
                                     <button type="button" onclick="validateAndGoToStep3()" class="btn-submit-order w-100 py-3 shadow-lg d-inline-flex align-items-center justify-content-center gap-2 text-decoration-none" style="font-size: 16px; letter-spacing: 1px;">

@@ -65,7 +65,7 @@
     const monthNames = ["Th. 1", "Th. 2", "Th. 3", "Th. 4", "Th. 5", "Th. 6", "Th. 7", "Th. 8", "Th. 9", "Th. 10", "Th. 11", "Th. 12"];
     const labels = monthNames.slice(0, new Date().getMonth() + 1);
     const values = labels.map((m, i) => {
-        const found = monthlyData.find(d => d.month === (i + 1));
+        const found = monthlyData.find(d => parseInt(d.month) == (i + 1));
         return found ? found.total : 0;
     });
 

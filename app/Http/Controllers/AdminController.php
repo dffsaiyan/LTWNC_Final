@@ -687,8 +687,10 @@ class AdminController extends Controller implements HasMiddleware
     // --- Reports ---
     public function reports() {
         $top_products = DB::table('order_items')
-            ->select('product_id', DB::raw('SUM(quantity) as total_sold'))
-            ->groupBy('product_id')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->where('orders.status', 'completed')
+            ->select('order_items.product_id', DB::raw('SUM(order_items.quantity) as total_sold'))
+            ->groupBy('order_items.product_id')
             ->orderBy('total_sold', 'DESC')
             ->take(10)
             ->get()
@@ -697,7 +699,8 @@ class AdminController extends Controller implements HasMiddleware
                 return $item;
             });
 
-        $monthly_revenue = Order::select(DB::raw('MONTH(created_at) as month'), DB::raw('SUM(total_price) as total'))
+        $monthly_revenue = Order::where('status', 'completed')
+            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('SUM(total_price) as total'))
             ->whereYear('created_at', date('Y'))
             ->groupBy('month')
             ->get();
@@ -711,7 +714,7 @@ class AdminController extends Controller implements HasMiddleware
         $total_revenue = $orders->where('status', 'completed')->sum('total_price');
         
         // Tạo tên file theo thời gian hiện tại tiếng Việt (đã fix lỗi tràn ký tự)
-        $timeStr = date('d_\t\h\a\n\g_m_\n\a\m_Y_\l\u\c_H\h_i');
+        $timeStr = now()->format('d_\t\h\a\n\g_m_\n\a\m_Y_\l\u\c_H\h_i');
         $filename = "Bao_cao_DDH_ngay_$timeStr.xls";
 
         // Giao diện HTML để Excel hiển thị đẹp hơn

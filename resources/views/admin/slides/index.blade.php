@@ -111,49 +111,6 @@
                                         </form>
                                     </td>
                                 </tr>
-
-                                <!-- Edit Modal -->
-                                <div class="modal fade" id="editSlideModal{{ $slide->id }}" tabindex="-1">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content border-0 rounded-4 shadow-xl">
-                                            <div class="modal-header bg-dark text-white p-4 border-bottom-0 rounded-top-4">
-                                                <h5 class="modal-title fw-bold">Chỉnh sửa Slide #{{ $slide->id }}</h5>
-                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body p-4 text-start">
-                                                <form action="{{ route('admin.slides.update', $slide->id) }}" method="POST" enctype="multipart/form-data">
-                                                    @csrf
-                                                    <div class="mb-4 text-center">
-                                                        <label class="form-label d-block fw-bold text-muted small text-uppercase">Hình ảnh hiện tại</label>
-                                                        <img id="editPreview-{{ $slide->id }}" src="{{ asset($slide->image) }}" class="img-fluid rounded-3 shadow-sm mb-3" style="max-height: 150px;">
-                                                        <input type="file" name="image" class="form-control form-control-sm border-0 shadow-sm" onchange="previewEditSlide(this, {{ $slide->id }})">
-                                                        <div class="small text-muted mt-2">Để trống nếu không muốn đổi ảnh</div>
-                                                    </div>
-
-                                                    <div class="mb-4">
-                                                        <label class="form-label fw-bold small text-muted text-uppercase">Link liên kết</label>
-                                                        <div class="input-group search-group">
-                                                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-link"></i></span>
-                                                            <input type="url" name="link" class="form-control border-start-0 ps-0" value="{{ $slide->link }}" placeholder="https://...">
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="mb-4">
-                                                        <label class="form-label fw-bold small text-muted text-uppercase">Thứ tự hiển thị (1-10)</label>
-                                                        <div class="input-group search-group">
-                                                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-sort-numeric-down"></i></span>
-                                                            <input type="number" name="order" class="form-control border-start-0 ps-0" value="{{ $slide->order }}" min="1" max="10">
-                                                        </div>
-                                                    </div>
-
-                                                    <button type="submit" class="btn btn-orange w-100 rounded-pill py-2 fw-bold text-uppercase shadow-orange-sm">
-                                                        Cập nhật ngay
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                                 @endforeach
                             </tbody>
                         </table>
@@ -195,6 +152,51 @@
                             </div>
                             @endforeach
                         </div>
+
+                        <!-- Edit Modals (Moved outside table for stability) -->
+                        @foreach($slides as $slide)
+                        <div class="modal fade" id="editSlideModal{{ $slide->id }}" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 rounded-4 shadow-xl">
+                                    <div class="modal-header bg-dark text-white p-4 border-bottom-0 rounded-top-4">
+                                        <h5 class="modal-title fw-bold">Chỉnh sửa Slide #{{ $slide->id }}</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body p-4 text-start">
+                                        <form action="{{ route('admin.slides.update', $slide->id) }}" method="POST" enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="mb-4 text-center">
+                                                <label class="form-label d-block fw-bold text-muted small text-uppercase">Hình ảnh hiện tại</label>
+                                                <img id="editPreview-{{ $slide->id }}" src="{{ asset($slide->image) }}" class="img-fluid rounded-3 shadow-sm mb-3" style="max-height: 150px;">
+                                                <input type="file" name="image" class="form-control form-control-sm border-0 shadow-sm" onchange="previewEditSlide(this, {{ $slide->id }})">
+                                                <div class="small text-muted mt-2">Để trống nếu không muốn đổi ảnh</div>
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <label class="form-label fw-bold small text-muted text-uppercase">Link liên kết</label>
+                                                <div class="input-group search-group">
+                                                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-link"></i></span>
+                                                    <input type="url" name="link" class="form-control border-start-0 ps-0" value="{{ $slide->link }}" placeholder="https://...">
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <label class="form-label fw-bold small text-muted text-uppercase">Thứ tự hiển thị (1-10)</label>
+                                                <div class="input-group search-group">
+                                                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-sort-numeric-down"></i></span>
+                                                    <input type="number" name="order" class="form-control border-start-0 ps-0" value="{{ $slide->order }}" min="1" max="10">
+                                                </div>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-orange w-100 rounded-pill py-2 fw-bold text-uppercase shadow-orange-sm">
+                                                Cập nhật ngay
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>

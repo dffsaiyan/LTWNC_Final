@@ -146,3 +146,4 @@ Route::get('/notifications/{id}/read', function($id) {
 
 // Order Cancellation
 Route::post('/account/orders/{id}/cancel', [\App\Http\Controllers\AccountController::class, 'cancelOrder'])->name('account.orders.cancel')->middleware('auth');
+
