@@ -2548,9 +2548,7 @@
             <button onclick="toggleAIChat()" class="btn-close btn-close-white small border-0 shadow-none"></button>
         </div>
         <div class="ai-chat-body" id="aiChatBody">
-            <div class="ai-msg ai-msg-bot shadow-sm animate__animated animate__fadeInUp">
-                Xin chào! Tôi là trợ lý AI của <b>DDH Electronics</b>. Tôi có thể giúp bạn tìm kiếm sản phẩm hoặc tư vấn kỹ thuật. Bạn cần giúp gì ạ?
-            </div>
+            <div class="ai-msg ai-msg-bot shadow-sm animate__animated animate__fadeInUp">Xin chào! Tôi là trợ lý AI của <b>DDH Electronics</b>. Tôi có thể giúp bạn tìm kiếm sản phẩm hoặc tư vấn kỹ thuật. Bạn cần giúp gì ạ?</div>
         </div>
         <div class="ai-chat-footer shadow-lg">
             <input type="text" id="aiInput" placeholder="Nhập tin nhắn..." onkeypress="if(event.key === 'Enter') sendAIMessage()">
