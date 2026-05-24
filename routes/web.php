@@ -113,7 +113,7 @@ Route::post('/admin/posts/update/{id}', [AdminController::class, 'updatePost'])-
 Route::get('/admin/posts/delete/{id}', [AdminController::class, 'deletePost'])->name('admin.posts.delete');
 
 Route::get('/admin/subscribers', [AdminController::class, 'subscribers'])->name('admin.subscribers');
-Route::get('/admin/subscribers/delete/{id}', [AdminController::class, 'deleteSubscriber'])->name('admin.subscribers.delete');
+Route::post('/admin/subscribers/delete/{id}', [AdminController::class, 'deleteSubscriber'])->name('admin.subscribers.delete');
 
 // Admin Voucher Management
 Route::get('/admin/coupons', [AdminController::class, 'coupons'])->name('admin.coupons');
